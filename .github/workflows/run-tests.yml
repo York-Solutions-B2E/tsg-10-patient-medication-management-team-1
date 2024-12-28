@@ -1,0 +1,70 @@
+name: Run Backend and Frontend Tests
+
+on:
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch.
+
+jobs:
+  backend-tests:
+    name: Run Backend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Specify your Java version.
+
+      # Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven
+
+      # Build and run tests
+      - name: Build and Test Backend
+        working-directory: ./backend  # Navigate to the backend folder
+        run: ./mvnw clean test
+
+  frontend-tests:
+    name: Run Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Specify your Node.js version.
+
+      # Cache Node.js dependencies
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules
+
+      # Install dependencies
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend  # Navigate to the frontend folder
+        run: npm install
+
+      # Run tests
+      - name: Run Frontend Tests
+        working-directory: ./frontend
+        run: npm test
