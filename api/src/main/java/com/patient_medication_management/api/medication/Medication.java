@@ -27,8 +27,7 @@ public class Medication {
 
     @Column(nullable = false, unique = true)
     private String code;
-
-    // One Medication can have many Prescriptions
+    
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
 

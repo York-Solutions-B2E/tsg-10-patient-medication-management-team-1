@@ -32,11 +32,9 @@ public class Pharmacy {
     @Column(name = "fax")
     private String fax;
 
-    // One Pharmacy can have many Patients
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Patient> patients;
-
-    // One Pharmacy can have many Prescriptions
+    
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
 }

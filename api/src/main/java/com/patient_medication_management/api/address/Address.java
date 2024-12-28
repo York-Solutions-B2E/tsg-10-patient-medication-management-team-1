@@ -33,9 +33,6 @@ public class Address {
     @Column(name = "zip_code", nullable = false)
     private String zipCode;
 
-    //    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
-    //    private Patient patient;
-
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
     private List<Patient> patients;
 }

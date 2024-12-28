@@ -32,10 +32,10 @@ public class Prescription {
     private PrescriptionStatus status;
 
     @Column(nullable = false)
-    private String issueDate; // Date of issue
+    private String issueDate;
 
     @Column(nullable = false)
-    private String dosage; // Dosage information
+    private String dosage;
 
     @Column(nullable = false)
     private Integer quantity;

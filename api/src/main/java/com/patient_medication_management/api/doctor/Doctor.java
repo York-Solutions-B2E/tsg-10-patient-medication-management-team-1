@@ -34,8 +34,7 @@ public class Doctor {
     @Column(name = "phone_number")
     private String phone;
 
-    // One Doctor can have many Prescriptions
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
-    
+
 }
