@@ -36,10 +36,8 @@ class ManagementApi {
    */
   static async request(endpoint, method = "get", data = {}) {
     console.debug("API Call:", endpoint, data, method);
-    console.log(this.token);
     const url = `${BASE_URL}${endpoint}`;
     const headers = this.token ? { "X-XSRF-TOKEN": this.token } : {};
-    console.log(headers);
     try {
       return (
         await axios({ url, method, data, headers, withCredentials: true })

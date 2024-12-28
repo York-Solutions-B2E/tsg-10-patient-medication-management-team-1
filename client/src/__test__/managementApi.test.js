@@ -48,6 +48,18 @@ describe("ManagementApi", () => {
     }
   });
 
+  test("should throw an array of messages", async () => {
+    axios.mockRejectedValue({
+      response: { data: { error: { message: ["error1", "error2"] } } },
+    });
+
+    try {
+      await ManagementApi.request("/path", "get");
+    } catch (error) {
+      expect(error).toEqual(["error1", "error2"]);
+    }
+  });
+
   // patient tests
 
   test("should create a new patient", async () => {
