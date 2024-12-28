@@ -17,7 +17,7 @@ const PatientsPage = () => {
         setPatients(response.data);
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError("Error please try again later");
         setLoading(false);
       }
     }
@@ -57,6 +57,7 @@ const PatientsPage = () => {
         <section>
           <h1>Current Patients</h1>
           <TextField
+              data-testid="patient-search-input"
               label="Search Patients"
               variant="outlined"
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -68,9 +69,15 @@ const PatientsPage = () => {
               }}
           />
         </section>
-        <div style={{height: 400, width: '100%'}}>
-          <DataGrid rows={filteredRows} columns={columns} pageSize={5}/>
-        </div>
+          {loading ? (
+              <p>Loading...</p>
+          ) : error ? (
+              <p style={{ color: 'red' }}>{error}</p> // Display the error message in red
+          ) : (
+              <div style={{ height: 400, width: '100%' }}>
+                  <DataGrid rows={filteredRows} columns={columns} pageSize={5} />
+              </div>
+          )}
       </div>
   )
 };
