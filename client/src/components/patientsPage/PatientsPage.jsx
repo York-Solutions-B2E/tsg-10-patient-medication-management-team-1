@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {DataGrid} from "@mui/x-data-grid";
 import {TextField} from "@mui/material";
+import "../../styles/patients-page.scss"
 
 const PatientsPage = () => {
   const [patients, setPatients] = useState([]);
@@ -52,14 +53,21 @@ const PatientsPage = () => {
   });
 
   return (
-      <div>
-        <TextField
-            label="Search Patients"
-            variant="outlined"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            fullWidth
-            margin="normal"
-        />
+      <div className="patients-page">
+        <section>
+          <h1>Current Patients</h1>
+          <TextField
+              label="Search Patients"
+              variant="outlined"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              margin="normal"
+              InputProps={{
+                style: {
+                  width: '300px', // Set the width here
+                },
+              }}
+          />
+        </section>
         <div style={{height: 400, width: '100%'}}>
           <DataGrid rows={filteredRows} columns={columns} pageSize={5}/>
         </div>
