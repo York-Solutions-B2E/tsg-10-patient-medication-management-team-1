@@ -1,10 +1,13 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {DataGrid} from "@mui/x-data-grid";
+import {TextField} from "@mui/material";
+
 const PatientsPage = () => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -39,11 +42,26 @@ const PatientsPage = () => {
     Prescriptions: patient.Prescriptions,
   }));
 
+  const filteredRows = rows.filter(row => {
+    return (
+        row.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.Address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.Dob.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
       <div>
-        <div>Hello</div>
+        <TextField
+            label="Search Patients"
+            variant="outlined"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            fullWidth
+            margin="normal"
+        />
         <div style={{height: 400, width: '100%'}}>
-          <DataGrid rows={rows} columns={columns} pageSize={5}/>
+          <DataGrid rows={filteredRows} columns={columns} pageSize={5}/>
         </div>
       </div>
   )
