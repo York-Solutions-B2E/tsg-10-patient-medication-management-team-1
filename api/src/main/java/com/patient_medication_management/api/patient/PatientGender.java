@@ -1,6 +1,6 @@
 package com.patient_medication_management.api.patient;
 
-public enum Gender {
+public enum PatientGender {
     MALE,
     FEMALE
 }

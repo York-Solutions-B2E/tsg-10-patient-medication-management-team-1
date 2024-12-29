@@ -35,12 +35,12 @@ public class Patient {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Gender gender;
+    private PatientGender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-    
+
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
 
