@@ -25,9 +25,11 @@ const Navbar = ({ isLoggedIn, logout }) => {
         <div className="nav-right">
           <Button
             onClick={() => navigate("/patients")}
+            // variant={pathname.includes("/patients") ? "outlined" : "outlined"}
             className={
               `nav-item` + (pathname.includes("/patients") ? " active" : "")
             }
+            // className="nav-item"
           >
             Patient Management
           </Button>
