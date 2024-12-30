@@ -1,6 +1,10 @@
 package com.patient_medication_management.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -15,6 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.patient_medication_management.api.doctor.DoctorService;
+import com.patient_medication_management.api.dto.responses.DoctorDTO;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,50 +33,32 @@ import java.util.Map;
 public class AuthController {
 
     private final ClientRegistration registration;
+    private final DoctorService doctorService;
 
-    public AuthController(ClientRegistrationRepository registration) {
-        this.registration = registration.findByRegistrationId("okta");
+    @Autowired
+    public AuthController(ClientRegistrationRepository registrations, DoctorService doctorService) {
+        this.registration = registrations.findByRegistrationId("okta");
+        this.doctorService = doctorService;
     }
 
     @GetMapping("/")
-    public String redirectToFrontend() {
-        return "redirect:http://localhost:3000/";
+    public ResponseEntity<?> redirectToFrontend(HttpServletResponse response) {
+        response.setHeader("Location", "http://localhost:3000/");
+        return ResponseEntity.status(HttpStatus.FOUND).build();
+    }
+
+    @PostMapping("/api/user")
+    public ResponseEntity<DoctorDTO> getOrCreateDoctorUser(@AuthenticationPrincipal OAuth2User user)
+            throws Exception {
+        return ResponseEntity.ok(doctorService.getOrCreateDoctorUser(user));
     }
 
     // Provide user data to the frontend - Needed to manage role-based access for react-router-dom routes
-    @GetMapping("/api/user")
-    public ResponseEntity<?> getUser(@AuthenticationPrincipal OAuth2User user) {
-        if (user == null) {
-            return ResponseEntity.ok().body("");
-        }
-        return ResponseEntity.ok(user.getAttributes());
-    }
-
-    @RequestMapping("/api/oauthinfo")
-    @ResponseBody
-    public String oauthUserInfo(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
-                                @AuthenticationPrincipal OAuth2User oauth2User) {
-        return "User Name: " + oauth2User.getName() + "<br/>" +
-                "User Authorities: " + oauth2User.getAuthorities() + "<br/>" +
-                "Client Name: " + authorizedClient.getClientRegistration().getClientName() + "<br/>" +
-                this.prettyPrintAttributes(oauth2User.getAttributes());
-    }
-
-    private String prettyPrintAttributes(Map<String, Object> attributes) {
-        String acc = "User Attributes: <br/><div style='padding-left:20px'>";
-        for (String key : attributes.keySet()) {
-            Object value = attributes.get(key);
-            acc += "<div>" + key + ":&nbsp" + value.toString() + "</div>";
-        }
-        return acc + "</div>";
-    }
-
     // Login route : automatically created by OAuth2 in the Security Config /login/oauth2/code/okta
-
     // Logout route
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request,
-                                    @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
+            @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
 
         // Build the logout details (end session endpoint and id token) to send to the client
         Map<String, String> logoutDetails = new HashMap<>();

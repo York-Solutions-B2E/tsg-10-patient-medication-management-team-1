@@ -15,15 +15,14 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/index.html", "/static/**",
-                        "/*.ico", "/*.json", "/*.png", "/api/user", "/login/oauth2/code/okta",
-                        "/api/logout", "/api/**", "/error")
+                        "/*.ico", "/*.json", "/*.png", "/login/oauth2/code/okta",
+                        "/api/logout", "/error")
                 .permitAll()
                 .anyRequest().authenticated());
         http.csrf((csrf) -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                        .ignoringRequestMatchers("/api/patients/**", "/api/**")
-                // permits public access for POST, PUT, DELETE requests
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+        // permits public access for POST, PUT, DELETE requests
         );
         http.addFilterAfter(new CookieCsrfFilter(), BasicAuthenticationFilter.class);
         http.oauth2Login(oauth2 -> oauth2
