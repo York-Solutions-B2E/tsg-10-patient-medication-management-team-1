@@ -1,7 +1,6 @@
-import React from 'react';
-import '../styles/Navbar.scss';
+import "../styles/Navbar.scss";
 
-const Navbar = () => {
+const Navbar = ({ isLoggedIn }) => {
   return (
     <nav className="navbar">
       {/* Home Link */}
@@ -10,9 +9,7 @@ const Navbar = () => {
       </div>
 
       {/* Title in the Center */}
-      <div className="nav-center">
-        Medical Prescription Manager
-      </div>
+      <div className="nav-center">Medical Prescription Manager</div>
 
       {/* Links on the Right */}
       <div className="nav-right">
