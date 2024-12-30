@@ -3,24 +3,25 @@ import axios from "axios";
 import {DataGrid} from "@mui/x-data-grid";
 import {TextField} from "@mui/material";
 import "../../styles/patients-page.scss"
+import {useAppContext} from "../../context/AppContext.jsx"
+import DataGridComponent from "../DataGridComponent.jsx";
 
 const PatientsPage = () => {
+  const { handleGetPatients, isLoading, error } = useAppContext();
   const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const title = "Patient List"
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/patients')
-        setPatients(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError("Error please try again later");
-        setLoading(false);
+        const patientData = await handleGetPatients(); // Example with default page and limit
+        setPatients(patientData.json());
+        console.log("SDFLJSDF", patientData);
+      } catch (err) {
+        console.error("Error fetching patients:", err);
       }
-    }
+    };
 
     fetchPatients();
   }, [])
@@ -43,41 +44,15 @@ const PatientsPage = () => {
     Prescriptions: patient.Prescriptions,
   }));
 
-  const filteredRows = rows.filter(row => {
-    return (
-        row.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.Address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.Dob.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
   return (
       <div className="patients-page">
-        <section>
-          <h1>Current Patients</h1>
-          <TextField
-              data-testid="patient-search-input"
-              label="Search Patients"
-              variant="outlined"
-              onChange={(e) => setSearchTerm(e.target.value)}
-              margin="normal"
-              InputProps={{
-                style: {
-                  width: '300px', // Set the width here
-                },
-              }}
-          />
-        </section>
-          {loading ? (
-              <p>Loading...</p>
-          ) : error ? (
-              <p style={{ color: 'red' }}>{error}</p> // Display the error message in red
-          ) : (
-              <div style={{ height: 400, width: '100%' }}>
-                  <DataGrid rows={filteredRows} columns={columns} pageSize={5} />
-              </div>
-          )}
+        <DataGridComponent
+            title={title}
+            isLoading={isLoading}
+            error={error}
+            columns={columns}
+            rows={rows}
+        />
       </div>
   )
 };
