@@ -16,8 +16,7 @@ const PatientsPage = () => {
     const fetchPatients = async () => {
       try {
         const patientData = await handleGetPatients(); // Example with default page and limit
-        setPatients(patientData.json());
-        console.log("SDFLJSDF", patientData);
+        setPatients(patientData);
       } catch (err) {
         console.error("Error fetching patients:", err);
       }
@@ -45,7 +44,7 @@ const PatientsPage = () => {
   }));
 
   return (
-      <div className="patients-page">
+      <div data-testid="grid-container" className="patients-page">
         <DataGridComponent
             title={title}
             isLoading={isLoading}
