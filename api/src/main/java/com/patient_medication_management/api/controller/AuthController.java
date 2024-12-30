@@ -32,12 +32,12 @@ import java.util.Map;
 @Controller
 public class AuthController {
 
-    private final ClientRegistration registration;
+    private final ClientRegistrationRepository registrations;
     private final DoctorService doctorService;
 
     @Autowired
     public AuthController(ClientRegistrationRepository registrations, DoctorService doctorService) {
-        this.registration = registrations.findByRegistrationId("okta");
+        this.registrations = registrations;
         this.doctorService = doctorService;
     }
 
@@ -57,12 +57,17 @@ public class AuthController {
     // Login route : automatically created by OAuth2 in the Security Config /login/oauth2/code/okta
     // Logout route
     @PostMapping("/api/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request,
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request,
             @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
+
+        ClientRegistration registration = registrations.findByRegistrationId("okta");
+        if (registration == null) {
+            throw new IllegalStateException("ClientRegistration not found for id 'okta'");
+        }
 
         // Build the logout details (end session endpoint and id token) to send to the client
         Map<String, String> logoutDetails = new HashMap<>();
-        String logoutUrl = this.registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString();
+        String logoutUrl = registration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString();
         logoutDetails.put("logoutUrl", logoutUrl);
         logoutDetails.put("idToken", idToken.getTokenValue());
 

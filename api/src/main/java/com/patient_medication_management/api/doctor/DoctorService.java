@@ -9,7 +9,7 @@ import com.patient_medication_management.api.dto.responses.DoctorDTO;
 @Service
 public class DoctorService {
 
-    private DoctorRepository doctorRepository;
+    private final DoctorRepository doctorRepository;
 
     @Autowired
     public DoctorService(DoctorRepository doctorRepository) {
