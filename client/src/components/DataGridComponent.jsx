@@ -6,12 +6,10 @@ const DataGridComponent = ({title, isLoading, error, rows, columns}) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const filteredRows = rows.filter(row => {
-        console.log(row)
         return (
             row.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             row.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            row.Address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            row.Dob.toLowerCase().includes(searchTerm.toLowerCase())
+            row.Address.toLowerCase().includes(searchTerm.toLowerCase())
         );
     });
 
