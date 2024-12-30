@@ -1,4 +1,4 @@
-package com.patient_medication_management.api.prescription;
+package com.patient_medication_management.api.enums;
 
 public enum PrescriptionStatus {
     SENT,

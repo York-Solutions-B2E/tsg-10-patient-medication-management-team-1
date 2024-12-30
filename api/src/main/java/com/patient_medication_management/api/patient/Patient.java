@@ -1,15 +1,23 @@
 package com.patient_medication_management.api.patient;
 
 import com.patient_medication_management.api.address.Address;
+import com.patient_medication_management.api.enums.PatientGender;
 import com.patient_medication_management.api.pharmacy.Pharmacy;
 import com.patient_medication_management.api.prescription.Prescription;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "patients")
 public class Patient {
@@ -23,8 +31,6 @@ public class Patient {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "phone")
