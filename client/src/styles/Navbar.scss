@@ -1,0 +1,47 @@
+.navbar {
+  position: fixed; /* Stick the navbar to the top of the screen */
+  top: 0;
+  left: 0;
+  width: 100%; /* Span the full width of the screen */
+  background-color: #20c997; /* Teal background */
+  color: white;
+  padding: 1rem 2rem; /* Padding for spacing inside the navbar */
+  display: flex; /* Flexbox layout */
+  align-items: center; /* Vertically align items */
+  justify-content: space-between; /* Spread sections (left, center, right) */
+  border-radius: 0 0 10px 10px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.nav-left {
+  position: absolute; /* Fixes the "Home" link to the left */
+  left: 1rem; /* Minimal space from the left edge of the screen */
+}
+
+.nav-center {
+  flex: 1; /* Ensures the title stays centered */
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.nav-right {
+  flex: 1; /* Align links to the right */
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem; /* Add spacing between nav items */
+}
+
+.nav-item {
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease; /* Smooth transition for hover effect */
+
+  &:hover {
+    color: #fff; /* Change text color on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+  }
+
+  
+}
