@@ -1,7 +1,7 @@
 import "../../styles/PublicPage.scss";
 import { useAppContext } from "../../context/AppContext"; // Import the context hook
 
-const LoginPage = () => {
+const PublicPage = () => {
   const { handleLogin, isLoading } = useAppContext(); // Destructure handleLogin and isLoading from context
 
   return (
@@ -18,4 +18,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default PublicPage;
