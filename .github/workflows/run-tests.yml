@@ -21,19 +21,19 @@ jobs:
         with:
           java-version: '17'  # Specify your Java version.
 
-      # Cache Maven dependencies
-      - name: Cache Maven dependencies
+      # Cache Gradle dependencies
+      - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven
+            ${{ runner.os }}-gradle
 
       # Build and run tests
       - name: Build and Test Backend
         working-directory: ./backend  # Navigate to the backend folder
-        run: ./mvnw clean test
+        run: ./gradlew clean test
 
   frontend-tests:
     name: Run Frontend Tests
@@ -48,7 +48,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # Specify your Node.js version.
+          node-version: '23'  # Specify your Node.js version.
 
       # Cache Node.js dependencies
       - name: Cache Node Modules
@@ -62,7 +62,7 @@ jobs:
       # Install dependencies
       - name: Install Frontend Dependencies
         working-directory: ./frontend  # Navigate to the frontend folder
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       # Run tests
       - name: Run Frontend Tests
