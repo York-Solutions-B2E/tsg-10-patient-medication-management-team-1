@@ -10,17 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, String> {
-//    @Query("SELECT p FROM Patient p WHERE " +
-//            "LOWER(p.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-//            "OR LOWER(p.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-//            "OR LOWER(p.dob) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-//            "OR (LOWER(p.gender) = LOWER(:searchTerm)) " + // Exact match for gender
-//            "OR LOWER(p.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-//            "OR LOWER(p.phone) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-//            "OR LOWER(p.id) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-//    Page<Patient> searchPatients(String searchTerm, Pageable pageable);
-//
-
     @Query("SELECT p FROM Patient p " +
             "JOIN p.address a WHERE " +
             "LOWER(p.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
