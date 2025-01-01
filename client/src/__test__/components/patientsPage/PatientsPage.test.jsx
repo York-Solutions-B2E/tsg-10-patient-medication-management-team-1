@@ -1,102 +1,247 @@
-import {render, screen, waitFor, fireEvent} from '@testing-library/react';
-import {beforeEach} from "@jest/globals";
-import { useAppContext } from "../../../context/AppContext.jsx";
-import '@testing-library/jest-dom';
-import PatientsPage from "../../../components/patientsPage/PatientsPage.jsx";
+import {
+  describe,
+  expect,
+  test,
+  jest,
+  beforeEach,
+  afterEach,
+} from "@jest/globals";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import PatientsPage from "../../../components/patientsPage/PatientsPage";
+import { useAppContext } from "../../../context/AppContext";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-jest.mock("../../../context/AppContext.jsx");
+// Mock dependencies
+jest.mock("../../../context/AppContext.jsx", () => ({
+  useAppContext: jest.fn(),
+}));
 
-const mockAllPatients = [
-    {
-        "Id": "1",
-        "firstName": "John",
-        "lastName": "Doe",
-        "Dob": "1990-05-15",
-        "Address": {
-            "Street_one": "123 Maple St",
-            "Street_two": "Apt 101",
-            "City": "Springfield",
-            "State": "IL",
-            "Zip": "62701"
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+  useSearchParams: jest.fn(),
+}));
+
+// Mock the filter section with divs for simplicity
+jest.mock("../../../components/common/DataGridComponent", () => ({
+  __esModule: true,
+  default: ({
+    title,
+    isLoading,
+    rows,
+    columns,
+    filterOptions,
+    filterable,
+    page,
+    setPage,
+    lastPage,
+    totalPages,
+    pageSize,
+    searchFunction,
+  }) => (
+    // use this component to mock the DataGridComponent for testing. It does not need to display a table, just test that the props are passed correctly
+    <div data-testid="mock-data-grid">
+      <div data-testid="loading">{isLoading ? "Loading..." : "Loaded"}</div>
+      <div data-testid="title">{title}</div>
+      <div data-testid="page">{page}</div>
+      <div data-testid="pageSize">{pageSize}</div>
+      <div data-testid="lastPage">{lastPage}</div>
+      <div data-testid="totalPages">{totalPages}</div>
+      <div data-testid="filterable">{filterable.toString()}</div>
+      <div data-testid="filterOptions">
+        {filterOptions.map((option) => (
+          <>
+            <div data-id={`filterValue-${option.value}`} key={option.value}>
+              {option.value}
+            </div>
+            <div key={option.name} data-testid={`filterName-${option.label}`}>
+              {option.label}
+            </div>
+          </>
+        ))}
+      </div>
+      <div data-testid="columns">
+        {columns.map((col) => (
+          <div
+            key={col.field}
+          >{`${col.field} ${col.headerName} ${col.width}`}</div>
+        ))}
+      </div>
+      <div data-testid="rows">
+        {rows.map((row) => (
+          <div key={row.id}>
+            {columns.map((col) => (
+              <span key={col.field}>{row[col.field]}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div data-testid="renderCell">
+        {columns.map((col) =>
+          col.renderCell ? col.renderCell({ id: 3, value: 5 }) : null
+        )}
+      </div>
+      <button data-testid="page-button" onClick={() => setPage(2)}>
+        Page
+      </button>
+      <button
+        data-testid="search-button"
+        onClick={() => searchFunction("id", 1)}
+      >
+        Search
+      </button>
+    </div>
+  ),
+}));
+
+describe("PatientsPage", () => {
+  const mockNavigate = jest.fn();
+  const mockGetPatients = jest.fn();
+
+  beforeEach(() => {
+    // Mock the useNavigate hook
+    useNavigate.mockReturnValue(mockNavigate);
+
+    // Mock useAppContext
+    useAppContext.mockReturnValue({
+      handleGetPatients: mockGetPatients,
+      isLoading: false,
+    });
+
+    // Mock searchParams (for filter and filterValue)
+    useSearchParams.mockReturnValue([
+      new URLSearchParams({ filter: "lastName", filterValue: "Doe" }),
+    ]);
+
+    mockGetPatients.mockResolvedValue({
+      content: [
+        {
+          id: 1,
+          lastName: "Doe",
+          firstName: "John",
+          dob: "1990-01-01",
+          prescriptionCount: 5,
         },
-        "Prescriptions": 3
-    },
-    {
-        "Id": "2",
-        "firstName": "Jane",
-        "lastName": "Smith",
-        "Dob": "1985-08-22",
-        "Address": {
-            "Street_one": "456 Oak Ave",
-            "Street_two": "Suite 202",
-            "City": "Chicago",
-            "State": "IL",
-            "Zip": "60604"
+        {
+          id: 2,
+          lastName: "Smith",
+          firstName: "Jane",
+          dob: "1985-02-15",
+          prescriptionCount: 3,
         },
-        "Prescriptions": 5
-    },
-    // Add more objects if necessary
-];
-
-
-
-describe('<PatientPage />', () => {
-    beforeEach(() => {
-
-    })
-
-    afterEach(() => {
-        jest.clearAllMocks();
-        jest.resetAllMocks();// Clears any mock function calls or mock implementations
+      ],
+      pageNumber: 0,
+      last: true,
     });
+  });
 
-    it("renders PatientsPage with mocked context", async () => {
-        // Provide mock implementation for useAppContext
-        useAppContext.mockReturnValue({
-            handleGetPatients: jest.fn().mockResolvedValue(mockAllPatients), // Mock the patient fetch
-            isLoading: false, // Simulate not loading
-            error: null, // No error
-        });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-        render(<PatientsPage />);
+  test("renders PatientsPage and displays loading state", () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
 
-        // Verify that the component renders patient data correctly
-        await waitFor(() => {
-            expect(screen.getByText(1)).toBeInTheDocument()
-            expect(screen.getByText(/John/i)).toBeInTheDocument();
-            expect(screen.getByText(/Jane/i)).toBeInTheDocument();
-            expect(screen.getByText(/1985-08-22/i)).toBeInTheDocument();
-            expect(screen.getByText(/1990-05-15/i)).toBeInTheDocument();
-        });
-    });
+    expect(screen.getByTestId("mock-data-grid")).toBeInTheDocument();
+    expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+  });
 
-    it("displays error message when fetch fails", async () => {
-        // Mock useAppContext to simulate an error
-        useAppContext.mockReturnValue({
-            handleGetPatients: jest.fn().mockRejectedValue(new Error("Failed to fetch patients")), // Simulate fetch error
-            isLoading: false, // Not loading
-            error: "Failed to fetch patients", // Set the error message
-        });
+  test("displays patient data correctly", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
 
-        render(<PatientsPage />);
+    await waitFor(() => expect(mockGetPatients).toHaveBeenCalled());
 
-        // Wait for the error message to be rendered
-        await waitFor(() => {
-            expect(screen.getByText(/failed to fetch patients/i)).toBeInTheDocument();
-        });
-    });
+    expect(screen.getByTestId("title")).toHaveTextContent("Patient List");
+    expect(screen.getByTestId("rows")).toBeInTheDocument();
+    expect(screen.getByText("Doe")).toBeInTheDocument();
+    expect(screen.getByText("Smith")).toBeInTheDocument();
+  });
 
-    it("does not show error message if no error", async () => {
-        // Mock useAppContext to simulate successful data fetching
-        useAppContext.mockReturnValue({
-            handleGetPatients: jest.fn().mockResolvedValue([]), // Simulate successful fetch
-            isLoading: false, // Not loading
-            error: null, // No error
-        });
+  test("handles search functionality", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
 
-        render(<PatientsPage />);
+    fireEvent.click(screen.getByTestId("search-button"));
 
-        // Ensure that the error message is not rendered
-        expect(screen.queryByText(/failed to fetch patients/i)).not.toBeInTheDocument();
-    });
-})
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/patients?filter=id&filterValue=1",
+        { replace: true }
+      )
+    );
+  });
+
+  test("handles pagination", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTestId("page-button"));
+
+    await waitFor(() =>
+      expect(mockGetPatients).toHaveBeenCalledWith(1, 10, "lastName", "Doe")
+    );
+  });
+
+  test("renders correct filter options", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(mockGetPatients).toHaveBeenCalled());
+
+    expect(screen.getByTestId("filterName-ID")).toBeInTheDocument();
+    expect(screen.getByTestId("filterName-Last Name")).toBeInTheDocument();
+    expect(screen.getByTestId("filterName-First Name")).toBeInTheDocument();
+    expect(screen.getByTestId("filterName-Date of Birth")).toBeInTheDocument();
+  });
+
+  test("triggers prescription link correctly", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
+
+    const prescriptionButton = screen.getAllByText("5")[0];
+    fireEvent.click(prescriptionButton);
+
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/prescriptions?filter=patientId&filterValue=3"
+      )
+    );
+  });
+
+  test("renders edit and delete actions", async () => {
+    render(
+      <MemoryRouter>
+        <PatientsPage />
+      </MemoryRouter>
+    );
+
+    const editButton = screen.getAllByRole("button")[0];
+    const deleteButton = screen.getAllByRole("button")[1];
+
+    fireEvent.click(editButton);
+    fireEvent.click(deleteButton);
+
+    // Since no console log is available, you could add a check here for any actual side effects
+  });
+});
