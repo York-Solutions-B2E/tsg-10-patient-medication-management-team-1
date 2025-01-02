@@ -1,6 +1,7 @@
 package com.patient_medication_management.api.prescription;
 
 import com.patient_medication_management.api.doctor.Doctor;
+import com.patient_medication_management.api.enums.PrescriptionStatus;
 import com.patient_medication_management.api.medication.Medication;
 import com.patient_medication_management.api.patient.Patient;
 import com.patient_medication_management.api.pharmacy.Pharmacy;
