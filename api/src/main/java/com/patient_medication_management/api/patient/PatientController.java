@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(path = "api/patients")
@@ -33,12 +35,12 @@ public class PatientController {
 
     @GetMapping
     public ResponseEntity<Page<PatientDTO>> getPatients(
-            @RequestParam(required = false) String searchTerm,
-            @RequestParam(defaultValue = "1") int page,  // Default to page 1
+            @RequestParam(required = false) String filterName,
+            @RequestParam(required = false) String filterValue,
+            @RequestParam(defaultValue = "0") int page, //
             @RequestParam(defaultValue = "10") int size // Default to 10 entries
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<PatientDTO> patient = patientService.getPatients(searchTerm, pageable);
-        return ResponseEntity.ok(patient);
+        return ResponseEntity.ok(patientService.getPatients(filterName, filterValue, pageable));
     }
 }

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, String> {
-    @Query("SELECT p FROM Patient p " +
-            "JOIN p.address a WHERE " +
+    @Query("SELECT p FROM patients p " +
+            "JOIN p.addresses a WHERE " +
             "LOWER(p.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
             "OR LOWER(p.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
             "OR LOWER(p.dob) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
@@ -25,6 +25,12 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
             "OR LOWER(a.city) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
             "OR LOWER(a.state) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
             "OR LOWER(a.zipCode) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    Page<Patient> searchPatients(String searchTerm, Pageable pageable);
+    Page<Patient> findAllBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+
+
+    // TODO: Implement a daynamic query using Criteria API
+    Page<Patient> findAllByFilter(@Param("filterName") String filterName, @Param("filterValue") String filterValue, Pageable pageable);
+
 
 }
