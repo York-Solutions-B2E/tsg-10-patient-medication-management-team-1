@@ -61,13 +61,13 @@ class PatientServiceTest {
     void testGetPatientsWithSearchTerm() {
         // Setup mock repository to return a page of patients
         Page<Patient> mockPage = new PageImpl<>(List.of(patient));
-        when(patientRepository.searchPatients("John", pageable)).thenReturn(mockPage);
+        when(patientRepository.findByFirstNameContainingIgnoreCase("John", pageable)).thenReturn(mockPage);
 
         // Setup mock mapper to return a page of patient DTOs
         when(patientMapper.mapToDTO(patient)).thenReturn(patientDTO);
 
         // Call the method
-        Page<PatientDTO> result = patientService.getPatients("John", pageable);
+        Page<PatientDTO> result = patientService.getPatients("firstName", "John", pageable);
 
         // Verify results
         assertNotNull(result);
@@ -76,7 +76,7 @@ class PatientServiceTest {
     }
 
     @Test
-    void testGetPatientsWithoutSearchTerm() {
+    void testGetPatientsWithoutFilter() {
         // Setup mock repository to return a page of patients when no search term is provided
         Page<Patient> mockPage = new PageImpl<>(List.of(patient));
         when(patientRepository.findAll(pageable)).thenReturn(mockPage);
@@ -85,25 +85,7 @@ class PatientServiceTest {
         when(patientMapper.mapToDTO(patient)).thenReturn(patientDTO);
 
         // Call the method
-        Page<PatientDTO> result = patientService.getPatients(null, pageable);
-
-        // Verify results
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("John", result.getContent().get(0).getFirstName());
-    }
-
-    @Test
-    void testGetPatientsWithEmptySearchTerm() {
-        // Setup mock repository to return a page of patients when the search term is empty
-        Page<Patient> mockPage = new PageImpl<>(List.of(patient));
-        when(patientRepository.findAll(pageable)).thenReturn(mockPage);
-
-        // Setup mock mapper to return a page of patient DTOs
-        when(patientMapper.mapToDTO(patient)).thenReturn(patientDTO);
-
-        // Call the method with empty search term
-        Page<PatientDTO> result = patientService.getPatients("", pageable);
+        Page<PatientDTO> result = patientService.getPatients("none", "", pageable);
 
         // Verify results
         assertNotNull(result);

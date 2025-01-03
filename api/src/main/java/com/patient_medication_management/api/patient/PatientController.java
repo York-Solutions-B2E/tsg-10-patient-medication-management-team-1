@@ -35,8 +35,8 @@ public class PatientController {
 
     @GetMapping
     public ResponseEntity<Page<PatientDTO>> getPatients(
-            @RequestParam(required = false) String filterName,
-            @RequestParam(required = false) String filterValue,
+            @RequestParam(required = false, defaultValue = "none") String filterName,
+            @RequestParam(required = false, defaultValue = "") String filterValue,
             Pageable pageable
     ) {
         return ResponseEntity.ok(patientService.getPatients(filterName, filterValue, pageable));
