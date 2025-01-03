@@ -1,5 +1,7 @@
 package com.patient_medication_management.api.patient;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.patient_medication_management.api.address.Address;
 import com.patient_medication_management.api.enums.PatientGender;
 import com.patient_medication_management.api.pharmacy.Pharmacy;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,8 +50,9 @@ public class Patient {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Prescription> prescriptions;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    private List<Prescription> prescriptions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pharmacy_id")
@@ -59,5 +63,27 @@ public class Patient {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public Patient(String id, String firstName, String lastName, String email, String phone, String dob, PatientGender gender, Address address) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.dob = dob;
+        this.gender = gender;
+        this.address = address;
+    }
+
+    // Add helper methods for prescriptions
+    public void addPrescription(Prescription prescription) {
+        prescriptions.add(prescription);
+        prescription.setPatient(this);
+    }
+
+    public void removePrescription(Prescription prescription) {
+        prescriptions.remove(prescription);
+        prescription.setPatient(null);
+    }
 
 }

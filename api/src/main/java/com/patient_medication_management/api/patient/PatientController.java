@@ -5,10 +5,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/patients")
@@ -16,9 +15,16 @@ public class PatientController {
 
     private final PatientService patientService;
 
+
     @Autowired
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
+    }
+
+    // Endpoint to fetch all patients
+    @GetMapping
+    public List<PatientDTO> getAllPatients() {
+        return patientService.getAllPatients();
     }
 
     // Endpoint to create a new Patient
