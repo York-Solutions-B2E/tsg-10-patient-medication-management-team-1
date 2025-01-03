@@ -37,10 +37,8 @@ public class PatientController {
     public ResponseEntity<Page<PatientDTO>> getPatients(
             @RequestParam(required = false) String filterName,
             @RequestParam(required = false) String filterValue,
-            @RequestParam(defaultValue = "0") int page, //
-            @RequestParam(defaultValue = "10") int size // Default to 10 entries
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
         return ResponseEntity.ok(patientService.getPatients(filterName, filterValue, pageable));
     }
 }

@@ -71,25 +71,25 @@ public class PatientService {
                 patients = patientRepository.findByFirstNameContainingIgnoreCase(filterValue, pageable);
                 break;
             case "lastName":
-                patients = patientRepository.findByLastNameContaining(filterValue, pageable);
+                patients = patientRepository.findByLastNameContainingIgnoreCase(filterValue, pageable);
                 break;
             case "dob":
                 patients = patientRepository.findByDobContaining(filterValue, pageable);
                 break;
             case "gender":
-                patients = patientRepository.findByGenderContaining(filterValue, pageable);
+                patients = patientRepository.findByGenderContainingIgnoreCase(filterValue, pageable);
                 break;
             case "phone":
                 patients = patientRepository.findByPhoneContaining(filterValue, pageable);
                 break;
             case "email":
-                patients = patientRepository.findByEmailContaining(filterValue, pageable);
+                patients = patientRepository.findByEmailContainingIgnoreCase(filterValue, pageable);
                 break;
             case "address":
-                patients = patientRepository.findByAddressContaining(filterValue, pageable);
+                patients = patientRepository.findByAddressContainingIgnoreCase(filterValue, pageable);
                 break;
             case "pharmacy":
-                patients = patientRepository.findByPharmacyContaining(filterValue, pageable);
+                patients = patientRepository.findByPharmacyContainingIgnoreCase(filterValue, pageable);
                 break;
             case "all":
                 patients = patientRepository.findAllContaining(filterName, pageable);
