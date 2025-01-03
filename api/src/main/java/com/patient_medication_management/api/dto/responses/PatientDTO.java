@@ -3,9 +3,11 @@ package com.patient_medication_management.api.dto.responses;
 import com.patient_medication_management.api.enums.PatientGender;
 import lombok.*;
 
+import java.util.List;
+
 @Data
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PatientDTO {
 
     private String id;
@@ -22,5 +24,6 @@ public class PatientDTO {
     private String state;
     private String zipCode;
 
+    private List<String> prescriptionNames;
     private Long prescriptionCount;
 }

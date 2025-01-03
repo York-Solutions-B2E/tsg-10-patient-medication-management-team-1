@@ -15,7 +15,8 @@ public interface PatientMapper {
             @Mapping(target = "city", source = "address.city"),
             @Mapping(target = "state", source = "address.state"),
             @Mapping(target = "zipCode", source = "address.zipCode"),
-            @Mapping(target = "prescriptionCount", expression = "java(getPrescriptionCount(patient))")
+            @Mapping(target = "prescriptionCount", expression = "java(getPrescriptionCount(patient))"),
+            @Mapping(target = "prescriptionNames", source = "java(patient.getPrescriptions().stream().map(p -> p.getName()).collect(java.util.stream.Collectors.toList()))")
     })
     public abstract PatientDTO mapToDTO(Patient patient);
 
