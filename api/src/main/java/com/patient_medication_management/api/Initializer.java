@@ -75,18 +75,18 @@ public class Initializer implements CommandLineRunner {
 
 
         // Prescriptions
-        Prescription prescription1 = prescriptionRepository.save(
-                new Prescription("Take twice daily", UUID.randomUUID().toString().substring(0, 8), PrescriptionStatus.READY_FOR_PICKUP,
-                        "2024-01-01", "500mg", 30, medication1, doctor1, pharmacy1, patient1));
+        Prescription prescription1 = new Prescription("Take twice daily", UUID.randomUUID().toString().substring(0, 8),
+                PrescriptionStatus.READY_FOR_PICKUP, "2024-01-01", "500mg", 30, medication1, doctor1, pharmacy1, patient1);
 
-        Prescription prescription2 = prescriptionRepository.save(
-                new Prescription("Take as needed", UUID.randomUUID().toString().substring(0, 8), PrescriptionStatus.SENT,
-                        "2024-01-02", "200mg", 60, medication2, doctor2, pharmacy2, patient2));
+        Prescription prescription2 = new Prescription("Take as needed", UUID.randomUUID().toString().substring(0, 8),
+                PrescriptionStatus.SENT, "2024-01-02", "200mg", 60, medication2, doctor2, pharmacy2, patient2);
 
-        patient1.addPrescription(prescription1);
-        patient1.addPrescription(prescription2);
+        prescription1.setPatient(patient1);
+        prescription2.setPatient(patient2);
 
-        patientRepository.save(patient1);
+        // Save prescriptions
+        prescriptionRepository.save(prescription1);
+        prescriptionRepository.save(prescription2);
     }
 
     private String generateUniquePatientId() {

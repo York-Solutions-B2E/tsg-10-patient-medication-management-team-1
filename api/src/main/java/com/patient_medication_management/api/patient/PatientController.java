@@ -15,7 +15,6 @@ public class PatientController {
 
     private final PatientService patientService;
 
-
     @Autowired
     public PatientController(PatientService patientService) {
         this.patientService = patientService;

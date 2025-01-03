@@ -8,11 +8,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface MedicationMapper {
 
-    @Mapping(target = "name", source = "medicationName") // Map entity field medicationName to DTO field name
+    @Mapping(target = "name", source = "medicationName")
+    @Mapping(target = "medicineCode", source = "medicationCode")
     public abstract MedicationDTO mapToDTO(Medication medication);
 
     @Mapping(target = "medicationName", source = "name")
-    @Mapping(target = "medicationCode", source = "medicineCode") // Map medicineCode in DTO to medicationCode in entity
+    @Mapping(target = "medicationCode", source = "medicineCode")
     @Mapping(target = "prescriptions", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

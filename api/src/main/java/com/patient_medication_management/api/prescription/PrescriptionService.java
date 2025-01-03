@@ -15,9 +15,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class PrescriptionService {
 
@@ -39,29 +36,6 @@ public class PrescriptionService {
         this.doctorRepository = doctorRepository;
         this.pharmacyRepository = pharmacyRepository;
         this.prescriptionMapper = prescriptionMapper;
-    }
-
-    public List<PrescriptionDTO> getPrescriptionsByPatientId(String patientId) {
-        // Fetch prescriptions from database by patient ID
-        List<Prescription> prescriptions = prescriptionRepository.findByPatientId(patientId);
-        // Convert list of prescriptions to stream for transformation
-        return prescriptions.stream()
-                // Map each prescription entity to PrescriptionDTO
-                .map(p -> new PrescriptionDTO(
-                        p.getPrescriptionId(),
-                        p.getPatient().getId(),
-                        p.getMedication().getMedicationCode(),
-                        p.getInstructions(),
-                        p.getStatus(),
-                        p.getIssueDate(),
-                        p.getDosage(),
-                        p.getQuantity(),
-                        p.getDoctor().getFirstName() + " " + p.getDoctor().getLastName(),
-                        p.getMedication().getMedicationName(),
-                        p.getPharmacy() != null ? p.getPharmacy().getName() : null // (if pharmacy exists)
-                ))
-                // Collect mapped PrescriptionDTO back to list
-                .collect(Collectors.toList());
     }
 
     // Create a new prescription

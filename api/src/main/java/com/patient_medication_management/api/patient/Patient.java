@@ -14,7 +14,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -73,17 +72,6 @@ public class Patient {
         this.dob = dob;
         this.gender = gender;
         this.address = address;
-    }
-
-    // Add helper methods for prescriptions
-    public void addPrescription(Prescription prescription) {
-        prescriptions.add(prescription);
-        prescription.setPatient(this);
-    }
-
-    public void removePrescription(Prescription prescription) {
-        prescriptions.remove(prescription);
-        prescription.setPatient(null);
     }
 
 }
