@@ -35,5 +35,13 @@ public class Address {
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
     private List<Patient> patients;
+
+    public Address(String street1, String street2, String city, String state, String zipCode) {
+        this.street1 = street1;
+        this.street2 = street2;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+    }
 }
 
