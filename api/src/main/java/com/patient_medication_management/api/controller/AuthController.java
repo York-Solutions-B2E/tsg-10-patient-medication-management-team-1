@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
@@ -16,8 +14,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.patient_medication_management.api.doctor.DoctorService;
 import com.patient_medication_management.api.dto.responses.DoctorDTO;
@@ -58,7 +54,7 @@ public class AuthController {
     // Logout route
     @PostMapping("/api/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletRequest request,
-            @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
+                                                      @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
 
         ClientRegistration registration = registrations.findByRegistrationId("okta");
         if (registration == null) {

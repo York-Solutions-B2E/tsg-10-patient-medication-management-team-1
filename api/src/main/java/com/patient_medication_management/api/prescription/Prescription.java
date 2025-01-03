@@ -1,5 +1,7 @@
 package com.patient_medication_management.api.prescription;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.patient_medication_management.api.doctor.Doctor;
 import com.patient_medication_management.api.enums.PrescriptionStatus;
 import com.patient_medication_management.api.medication.Medication;
@@ -12,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,7 +26,10 @@ public class Prescription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Primary key
+
+    @Column(nullable = false)
+    private String prescriptionId; // Unique ID assigned on submission
 
     @Column(nullable = false)
     private String instructions;
@@ -55,6 +61,7 @@ public class Prescription {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Patient patient;
 
     @CreationTimestamp
@@ -62,4 +69,18 @@ public class Prescription {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public Prescription(String instructions, String prescriptionId, PrescriptionStatus status, String issueDate, String dosage, Integer quantity,
+                        Medication medication, Doctor doctor, Pharmacy pharmacy, Patient patient) {
+        this.instructions = instructions;
+        this.prescriptionId = prescriptionId;
+        this.status = status;
+        this.issueDate = issueDate;
+        this.dosage = dosage;
+        this.quantity = quantity;
+        this.medication = medication;
+        this.doctor = doctor;
+        this.pharmacy = pharmacy;
+        this.patient = patient;
+    }
 }

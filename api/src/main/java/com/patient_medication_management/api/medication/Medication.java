@@ -26,8 +26,8 @@ public class Medication {
     private String name;
 
     @Column(nullable = false, unique = true)
-    private String code;
-    
+    private String medicineCode;
+
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
 
@@ -36,4 +36,9 @@ public class Medication {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public Medication(String name, String medicineCode) {
+        this.name = name;
+        this.medicineCode = medicineCode;
+    }
 }

@@ -34,7 +34,14 @@ public class Pharmacy {
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Patient> patients;
-    
+
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
+
+    public Pharmacy(String name, String address, String phone, String fax) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.fax = fax;
+    }
 }
