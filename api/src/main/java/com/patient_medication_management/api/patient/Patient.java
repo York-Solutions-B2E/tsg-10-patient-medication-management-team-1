@@ -53,10 +53,6 @@ public class Patient {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private List<Prescription> prescriptions = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pharmacy_id")
-    private Pharmacy pharmacy;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 
