@@ -34,4 +34,10 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
 
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable String id) {
+        PatientDTO patient = patientService.getPatientById(id);
+        return ResponseEntity.ok(patient);
+    }
 }

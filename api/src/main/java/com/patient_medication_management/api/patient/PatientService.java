@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,5 +64,13 @@ public class PatientService {
 
         // Map Entity to DTO for response
         return patientMapper.mapToDTO(savedPatient);
+    }
+
+    public PatientDTO getPatientById(String id) {
+        Optional<Patient> patientOptional = patientRepository.findById(id);
+        if (patientOptional.isEmpty()) {
+            throw new IllegalArgumentException("Patient with ID " + id + " not found.");
+        }
+        return patientMapper.mapToDTO(patientOptional.get());
     }
 }

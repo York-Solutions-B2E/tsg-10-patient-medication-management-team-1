@@ -20,9 +20,9 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest().authenticated());
         http.csrf((csrf) -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-        // permits public access for POST, PUT, DELETE requests
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                // permits public access for POST, PUT, DELETE requests
         );
         http.addFilterAfter(new CookieCsrfFilter(), BasicAuthenticationFilter.class);
         http.oauth2Login(oauth2 -> oauth2

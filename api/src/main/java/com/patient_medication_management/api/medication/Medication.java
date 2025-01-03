@@ -23,10 +23,10 @@ public class Medication {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String medicationName;
 
     @Column(nullable = false, unique = true)
-    private String medicineCode;
+    private String medicationCode;
 
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
@@ -37,8 +37,8 @@ public class Medication {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Medication(String name, String medicineCode) {
-        this.name = name;
-        this.medicineCode = medicineCode;
+    public Medication(String medicationName, String medicationCode) {
+        this.medicationName = medicationName;
+        this.medicationCode = medicationCode;
     }
 }

@@ -2,11 +2,10 @@ package com.patient_medication_management.api.prescription;
 
 import com.patient_medication_management.api.dto.responses.PrescriptionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -27,5 +26,12 @@ public class PrescriptionController {
     public ResponseEntity<List<PrescriptionDTO>> getPrescriptionsByPatientId(@PathVariable String patientId) {
         List<PrescriptionDTO> prescriptions = prescriptionService.getPrescriptionsByPatientId(patientId);
         return ResponseEntity.ok(prescriptions);
+    }
+
+    // Endpoint to create a new prescription
+    @PostMapping
+    public ResponseEntity<PrescriptionDTO> createPrescription(@RequestBody PrescriptionDTO prescriptionDTO) {
+        PrescriptionDTO createdPrescription = prescriptionService.createPrescription(prescriptionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPrescription);
     }
 }
