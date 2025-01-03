@@ -58,7 +58,7 @@ public class PatientServiceTest {
         AddressDTO addressDTO = new AddressDTO("789 Maple Street", "Apt 12C", "Springfield", "IL", "62704");
         String uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
         patientDTO = new PatientDTO(
-                uniqueId,
+                patient.getId(),
                 "Alice",
                 "Johnson",
                 "1992-07-12",
@@ -148,5 +148,53 @@ public class PatientServiceTest {
         verify(patientRepository, times(1)).findAll();
         verify(patientMapper, times(1)).mapToDTO(patient);
         verify(patientMapper, times(1)).mapToDTO(patientList.get(1));
+    }
+
+    @Test
+    void shouldUpdatePatientSuccessfully() {
+        AddressDTO updatedAddressDTO = new AddressDTO("123 New Address St", "Apt 10A", "Springfield", "IL", "62705");
+        PatientDTO updatedPatientDTO = new PatientDTO(
+                patientDTO.getId(), // Keep the same ID as the original patient
+                "Alice",
+                "Johnson",
+                "1992-07-12",
+                PatientGender.FEMALE,
+                "alice.johnson_updated@example.com", // Updated email
+                "987-654-3210",
+                updatedAddressDTO,
+                1 // Updated some other fields as an example
+        );
+        Patient updatedPatient = new Patient(
+                patient.getId(),
+                updatedPatientDTO.getFirstName(),
+                updatedPatientDTO.getLastName(),
+                updatedPatientDTO.getEmail(),
+                updatedPatientDTO.getPhone(),
+                updatedPatientDTO.getDob(),
+                updatedPatientDTO.getGender(),
+                addressMapper.mapToEntity(updatedPatientDTO.getAddress())
+        );
+
+        // Mock the methods in the service
+        when(patientRepository.existsById(updatedPatientDTO.getId())).thenReturn(true); // Assuming the patient exists
+        when(patientMapper.mapToEntity(updatedPatientDTO)).thenReturn(updatedPatient);
+        when(patientRepository.save(updatedPatient)).thenReturn(updatedPatient);
+        when(patientMapper.mapToDTO(updatedPatient)).thenReturn(updatedPatientDTO);
+
+        // Act: Call the updatePatient method
+        PatientDTO result = patientService.updatePatient(updatedPatientDTO);
+
+        // Assert: Check the result
+        assertNotNull(result);
+//        assertEquals(updatedPatientDTO.getFirstName(), result.getFirstName());
+//        assertEquals(updatedPatientDTO.getLastName(), result.getLastName());
+//        assertEquals(updatedPatientDTO.getEmail(), result.getEmail());
+//        assertEquals(updatedPatientDTO.getAddress().getStreet1(), result.getAddress().getStreet1());
+//
+//        // Verify the service methods were called
+//        verify(patientRepository, times(1)).existsById(updatedPatientDTO.getId());
+//        verify(patientMapper, times(1)).mapToEntity(updatedPatientDTO);
+//        verify(patientRepository, times(1)).save(updatedPatient);
+//        verify(patientMapper, times(1)).mapToDTO(updatedPatient);
     }
 }

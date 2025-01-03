@@ -39,4 +39,10 @@ public class PatientController {
         PatientDTO patient = patientService.getPatientById(id);
         return ResponseEntity.ok(patient);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientDTO> updatePatient(@RequestBody @Valid PatientDTO patientDTO) {
+        PatientDTO patient = patientService.updatePatient(patientDTO);
+        return ResponseEntity.ok(patient);
+    }
 }
