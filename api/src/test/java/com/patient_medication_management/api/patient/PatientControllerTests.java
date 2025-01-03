@@ -7,9 +7,11 @@ import com.patient_medication_management.api.enums.PatientGender;
 import com.patient_medication_management.api.patient.PatientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,22 +35,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(PatientController.class)
-@WithMockUser(username = "testuser", roles = "USER")
+@ExtendWith(MockitoExtension.class)
+//@WithMockUser(username = "testuser", roles = "USER")
 class PatientControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
 
-    @MockBean
+
+    @Mock
     private PatientService patientService;
+
+    @InjectMocks
+    private PatientController patientController;
 
     @Test
     public void testGetPatients_withoutSearchTerm() throws Exception {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
         // Creating PatientDTO objects
-        PatientDTO patient1 = new PatientDTO();
+        List<PatientDTO>
         patient1.setId("1");
         patient1.setFirstName("John");
         patient1.setLastName("Doe");
