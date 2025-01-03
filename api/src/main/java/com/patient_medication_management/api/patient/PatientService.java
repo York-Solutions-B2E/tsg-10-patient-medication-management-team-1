@@ -64,12 +64,39 @@ public class PatientService {
     public Page<PatientDTO> getPatients(String filterName, String filterValue, Pageable pageable) {
         Page<Patient> patients;
 
-        if (filterName != null && filterValue != null) {
-            patients = patientRepository.findAllByFilter(filterName, filterValue, pageable);
-        } else if (filterName.equals("all") && filterValue != null) {
-            patients = patientRepository.findAllBySearchTerm(filterValue, pageable);
-        } else {
-            patients = patientRepository.findAll(pageable);
+        switch (filterName) {
+            case "id":
+                patients = patientRepository.findByIdContainingIgnoreCase(filterValue, pageable);
+            case "firstName":
+                patients = patientRepository.findByFirstNameContainingIgnoreCase(filterValue, pageable);
+                break;
+            case "lastName":
+                patients = patientRepository.findByLastNameContaining(filterValue, pageable);
+                break;
+            case "dob":
+                patients = patientRepository.findByDobContaining(filterValue, pageable);
+                break;
+            case "gender":
+                patients = patientRepository.findByGenderContaining(filterValue, pageable);
+                break;
+            case "phone":
+                patients = patientRepository.findByPhoneContaining(filterValue, pageable);
+                break;
+            case "email":
+                patients = patientRepository.findByEmailContaining(filterValue, pageable);
+                break;
+            case "address":
+                patients = patientRepository.findByAddressContaining(filterValue, pageable);
+                break;
+            case "pharmacy":
+                patients = patientRepository.findByPharmacyContaining(filterValue, pageable);
+                break;
+            case "all":
+                patients = patientRepository.findAllContaining(filterName, pageable);
+                break;
+            default:
+                patients = patientRepository.findAll(pageable);
+                break;
         }
 
         return patients.map(patientMapper::mapToDTO);

@@ -10,27 +10,25 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, String> {
-    @Query("SELECT p FROM patients p " +
-            "JOIN p.addresses a WHERE " +
-            "LOWER(p.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(p.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(p.dob) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR (LOWER(p.gender) = LOWER(:searchTerm)) " + // Exact match for gender
-            "OR LOWER(p.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(p.phone) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(p.id) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            // Address fields
-            "OR LOWER(a.street1) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(a.street2) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(a.city) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(a.state) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "OR LOWER(a.zipCode) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    Page<Patient> findAllBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+    Page<Patient> findByIdContainingIgnoreCase(String id, Pageable pageable);
+
+    Page<Patient> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
+
+    Page<Patient> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
+
+    Page<Patient> findByDobContaining(String dob, Pageable pageable);
+
+    Page<Patient> findByGenderContainingIgnoreCase(String gender, Pageable pageable);
+
+    Page<Patient> findByPhoneContaining(String phone, Pageable pageable);
+
+    Page<Patient> findByEmailContainingIgnoreCase(String email, Pageable pageable);
+
+    // address i a separate table that is linked to the patient table
 
 
 
-    // TODO: Implement a daynamic query using Criteria API
-    Page<Patient> findAllByFilter(@Param("filterName") String filterName, @Param("filterValue") String filterValue, Pageable pageable);
 
 
 }
