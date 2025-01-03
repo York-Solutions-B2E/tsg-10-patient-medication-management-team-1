@@ -24,6 +24,5 @@ public class PatientDTO {
     private String state;
     private String zipCode;
 
-    private List<String> prescriptionNames;
     private Long prescriptionCount;
 }
