@@ -9,6 +9,7 @@ import {
   ContentPasteSearchSharp,
   CancelPresentationSharp,
 } from "@mui/icons-material";
+import useDisclosure from "../../hooks/useDisclosure.js";
 
 const PrescriptionsPage = () => {
   const [searchParams] = useSearchParams();
@@ -21,13 +22,11 @@ const PrescriptionsPage = () => {
   const [lastPage, setLastPage] = useState(false);
   const [selectedPrescriptionId, setSelectedPrescriptionId] = useState(null);
 
-  const {
-    handleGetPrescriptions,
-    handleCancelPrescription,
-    isLoading,
-    detailsModalDisc,
-    cancelModalDisc,
-  } = useAppContext();
+  const detailsModalDisc = useDisclosure();
+  const cancelModalDisc = useDisclosure();
+
+  const { handleGetPrescriptions, handleCancelPrescription, isLoading } =
+    useAppContext();
 
   const navigate = useNavigate();
 
