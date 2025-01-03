@@ -2,7 +2,6 @@ package com.patient_medication_management.api.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.patient_medication_management.api.enums.PrescriptionStatus;
-import com.patient_medication_management.api.pharmacy.Pharmacy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
