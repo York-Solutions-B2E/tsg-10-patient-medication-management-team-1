@@ -12,9 +12,10 @@ const ConfirmModal = ({
   title,
   content,
   action,
-  isLoading = false,
+  isLoading,
   isOpen,
   onClose,
+  children,
 }) => {
   return (
     <Modal open={isOpen} onClose={onClose}>
@@ -25,6 +26,7 @@ const ConfirmModal = ({
             <span>{content}</span>
           </CardContent>
         )}
+        {children}
         <CardActionArea>
           {action && (
             <Button
@@ -38,7 +40,7 @@ const ConfirmModal = ({
           <Button
             icon={<CancelSharp />}
             type="secondary"
-            isLoading={isLoading}
+            loading={isLoading}
             action={onClose}
             text={action ? "Cancel" : "Close"}
           />
