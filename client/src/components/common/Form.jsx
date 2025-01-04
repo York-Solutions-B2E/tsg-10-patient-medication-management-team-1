@@ -77,6 +77,7 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
             return (
               <TextField
                 key={field.name}
+                hidden={field.hidden || false}
                 name={field.name}
                 label={field.label}
                 type={field.type}
@@ -184,6 +185,21 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                 disableMonth={field.disableMonth || null}
                 disableYear={field.disableYear || null}
                 renderInput={(params) => <TextField {...params} />}
+              />
+            );
+          case "number":
+            return (
+              <TextField
+                key={field.name}
+                hidden={field.hidden || false}
+                name={field.name}
+                label={field.label}
+                type="number"
+                value={values[field.name]}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors[field.name] ? true : false}
+                helperText={errors[field.name]}
               />
             );
           default:
