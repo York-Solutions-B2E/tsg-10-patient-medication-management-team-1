@@ -7,6 +7,7 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
+  Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/lab";
 import Button from "./Button";
@@ -88,23 +89,45 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
             );
           case "select":
             return (
-              <TextField
-                key={field.name}
-                name={field.name}
-                select
-                label={field.label}
-                value={values[field.name]}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors[field.name] ? true : false}
-                helperText={errors[field.name]}
-              >
-                {field.options.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <>
+                {field.autocomplete ? (
+                  <Autocomplete
+                    key={field.name}
+                    name={field.name}
+                    options={field.options}
+                    value={values[field.name]}
+                    onChange={(e, value) => {
+                      handleChange({ target: { name: field.name, value } });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={field.label}
+                        error={errors[field.name] ? true : false}
+                        helperText={errors[field.name]}
+                      />
+                    )}
+                  />
+                ) : (
+                  <TextField
+                    key={field.name}
+                    name={field.name}
+                    select
+                    label={field.label}
+                    value={values[field.name]}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={errors[field.name] ? true : false}
+                    helperText={errors[field.name]}
+                  >
+                    {field.options.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              </>
             );
           case "checkbox":
             return (
