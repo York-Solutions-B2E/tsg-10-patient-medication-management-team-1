@@ -3,6 +3,9 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Form from "../../../components/common/Form";
 import useForm from "../../../hooks/useForm";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 jest.mock("../../../hooks/useForm", () => jest.fn());
 jest.mock("@mui/lab", () => ({
@@ -43,7 +46,12 @@ describe("Form Component", () => {
         { value: "female", label: "Female" },
       ],
     },
-    { name: "birthdate", label: "Birthdate", type: "date" },
+    {
+      name: "birthdate",
+      label: "Birthdate",
+      type: "date",
+      defaultValue: dayjs(),
+    },
     { name: "terms", label: "Accept Terms", type: "checkbox" },
   ];
 
@@ -75,7 +83,9 @@ describe("Form Component", () => {
     );
 
     render(
-      <Form fields={mockFields} onSubmit={mockOnSubmit} isLoading={false} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Form fields={mockFields} onSubmit={mockOnSubmit} isLoading={false} />
+      </LocalizationProvider>
     );
 
     // Check all input fields are rendered
@@ -106,7 +116,9 @@ describe("Form Component", () => {
     );
 
     render(
-      <Form fields={mockFields} onSubmit={mockOnSubmit} isLoading={false} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Form fields={mockFields} onSubmit={mockOnSubmit} isLoading={false} />
+      </LocalizationProvider>
     );
 
     const submitButton = screen.getByText("Submit");

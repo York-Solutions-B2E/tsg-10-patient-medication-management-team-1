@@ -9,7 +9,8 @@ import {
   FormControlLabel,
   Autocomplete,
 } from "@mui/material";
-import { DatePicker } from "@mui/lab";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Button from "./Button";
 
 const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
@@ -164,28 +165,30 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
             );
           case "date":
             return (
-              <DatePicker
-                key={field.name}
-                name={field.name}
-                label={field.label}
-                value={values[field.name]}
-                onChange={handleChange}
-                views={field.views || ["year", "month", "day"]}
-                openTo={field.openTo || "day"}
-                onBlur={handleBlur}
-                disableFuture={field.disableFuture || false}
-                disablePast={field.disablePast || false}
-                disableOpenPicker={field.disableOpenPicker || false}
-                format={field.format || "dd/MM/yyyy"}
-                error={errors[field.name] ? true : false}
-                helperText={errors[field.name]}
-                loading={isLoading || false}
-                shouldDisableDate={field.shouldDisableDate || null}
-                disableDate={field.disableDate || null}
-                disableMonth={field.disableMonth || null}
-                disableYear={field.disableYear || null}
-                renderInput={(params) => <TextField {...params} />}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  key={field.name}
+                  name={field.name}
+                  label={field.label}
+                  value={values[field.name]}
+                  onChange={handleChange}
+                  views={field.views || ["year", "month", "day"]}
+                  openTo={field.openTo || "day"}
+                  onBlur={handleBlur}
+                  disableFuture={field.disableFuture || false}
+                  disablePast={field.disablePast || false}
+                  disableOpenPicker={field.disableOpenPicker || false}
+                  format={field.format || "dd/MM/yyyy"}
+                  error={errors[field.name] ? true : false}
+                  helperText={errors[field.name]}
+                  loading={isLoading || false}
+                  shouldDisableDate={field.shouldDisableDate || null}
+                  disableDate={field.disableDate || null}
+                  disableMonth={field.disableMonth || null}
+                  disableYear={field.disableYear || null}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
             );
           case "number":
             return (
