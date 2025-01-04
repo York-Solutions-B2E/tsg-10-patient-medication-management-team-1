@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import Form from "../common/Form.jsx";
 
 const PrescriptionCreationPage = () => {
   const [searchParams] = useSearchParams();
@@ -54,9 +55,11 @@ const PrescriptionCreationPage = () => {
   ];
 
   const handleSubmit = async (values) => {
-    if (await handleCreatePrescription(values)) {
-      // Redirect to the prescriptions page
-      navigate("/prescriptions");
+    const newPrescription = await handleCreatePrescription(values);
+    if (newPrescription) {
+      navigate(
+        `/prescriptions?filterName=patientId&filterValue=${values.patientId}`
+      );
     }
   };
 
@@ -74,7 +77,16 @@ const PrescriptionCreationPage = () => {
     }
   }, [pharmacies, medications, handleGetPharmacies, handleGetMedications]);
 
-  return <div>PrescriptionCreationPage</div>;
+  return (
+    <div>
+      <Form
+        title="Create Prescription"
+        fields={formFields}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+      />
+    </div>
+  );
 };
 
 export default PrescriptionCreationPage;
