@@ -72,7 +72,7 @@ const PrescriptionCreationPage = () => {
     if (pharmacies.length === 0 && medications.length === 0) {
       fetchData();
     }
-  }, [pharmacies, medications]);
+  }, [pharmacies, medications, handleGetPharmacies, handleGetMedications]);
 
   return <div>PrescriptionCreationPage</div>;
 };
