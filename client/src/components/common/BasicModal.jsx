@@ -8,7 +8,7 @@ import {
 import { CheckSharp, CancelSharp } from "@mui/icons-material";
 import Button from "./Button";
 
-const ConfirmModal = ({
+const BasicModal = ({
   title,
   content,
   action,
@@ -50,7 +50,7 @@ const ConfirmModal = ({
   );
 };
 
-ConfirmModal.defaultProps = {
+BasicModal.defaultProps = {
   title: null,
   content: null,
   action: null,
@@ -59,4 +59,4 @@ ConfirmModal.defaultProps = {
   onClose: () => {},
 };
 
-export default ConfirmModal;
+export default BasicModal;
