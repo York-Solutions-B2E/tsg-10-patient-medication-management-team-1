@@ -3,10 +3,14 @@ import { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";
-import { Tooltip, IconButton } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import Form from "../common/Form.jsx";
-import BasicModal from "../common/BasicModal.jsx";
+import DeletePatientModal from "./DeletePatientModal.jsx";
+import CreatePatientModal from "./CreatePatientModal.jsx";
+import EditPatientModal from "./EditPatientModal.jsx";
+import NewPatientButton from "./NewPatientButton.jsx";
+import EditPatientButton from "./EditPatientButton.jsx";
+import DeletePatientButton from "./DeletePatientButton.jsx";
+import NewPatientPrescriptionButton from "./NewPatientPrescriptionButton.jsx";
+
 import useDisclosure from "../../hooks/useDisclosure.js";
 
 import states from "../../utils/states.js";
@@ -36,6 +40,8 @@ const PatientsPage = () => {
 
   const navigate = useNavigate();
 
+  // DataGrid columns
+
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "lastName", headerName: "Last Name", width: 150 },
@@ -50,17 +56,12 @@ const PatientsPage = () => {
       headerName: "Prescriptions",
       width: 150,
       renderCell: (params) => (
-        <Tooltip title="View Prescriptions">
-          <button
-            onClick={() =>
-              navigate(
-                `/prescriptions?filter=patientId&filterValue=${params.id}`
-              )
-            }
-          >
-            {params.value}
-          </button>
-        </Tooltip>
+        <NewPatientPrescriptionButton
+          onClick={() => {
+            navigate(`/prescriptions/create?patientId=${params.row.id}`);
+          }}
+          prescriptionCount={params.row.prescriptionCount}
+        />
       ),
     },
     {
@@ -69,32 +70,27 @@ const PatientsPage = () => {
       width: 150,
       renderCell: (params) => (
         <>
-          <Tooltip title="Edit Patient">
-            <IconButton
-              onClick={() => {
-                setSelectedPatientId(params.row.id);
-                editModalDisc.onOpen();
-              }}
-            >
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete Patient">
-            <IconButton
-              onClick={() => {
-                setSelectedPatientId(params.row.id);
-                deleteConfirmDisc.onOpen();
-              }}
-            >
-              <Delete />
-            </IconButton>
-          </Tooltip>
+          <EditPatientButton
+            onClick={() => {
+              setSelectedPatientId(params.row.id);
+              editModalDisc.onOpen();
+            }}
+          />
+
+          <DeletePatientButton
+            onClick={() => {
+              setSelectedPatientId(params.row.id);
+              deleteConfirmDisc.onOpen();
+            }}
+          />
         </>
       ),
       sortable: false,
       filterable: false,
     },
   ];
+
+  // Search filter options and methods
 
   const filterOptions = [
     { value: "id", label: "ID" },
@@ -112,6 +108,8 @@ const PatientsPage = () => {
       replace: true,
     });
   };
+
+  // Form fields for create and edit modals
 
   const getFormFields = (patient = null) => [
     {
@@ -202,6 +200,8 @@ const PatientsPage = () => {
     },
   ];
 
+  // Reset method to clear the page and reload data
+
   const resetPage = () => {
     setPatients([]);
     setTotalLoadedPages(0);
@@ -209,10 +209,7 @@ const PatientsPage = () => {
     setPage(0);
   };
 
-  const editFields = getFormFields(
-    selectedPatientId ? patients.find((p) => p.id === selectedPatientId) : null
-  );
-  const createFields = getFormFields();
+  // Submit methods for create, update, and delete
 
   const onCreateSubmit = async (values) => {
     const newPatient = await handleCreatePatient(values);
@@ -279,35 +276,26 @@ const PatientsPage = () => {
         pageSize={limit}
         searchFunction={handleSearch}
       />
-      <BasicModal
-        title="Create Patient"
-        isOpen={true}
-        onClose={createModalDisc.onClose}
-      >
-        <Form
-          fields={createFields}
-          onSubmit={onCreateSubmit}
-          // onCancel={createModalDisc.onClose}
-          clearable={true}
-        />
-      </BasicModal>
-      <BasicModal
-        title="Edit Patient"
-        isOpen={editModalDisc.isOpen}
-        onClose={editModalDisc.onClose}
-      >
-        <Form
-          fields={editFields}
-          onSubmit={onUpdateSubmit}
-          // onCancel={editModalDisc.onClose}
-        />
-      </BasicModal>
-      <BasicModal
-        title="Delete Patient"
-        isOpen={deleteConfirmDisc.isOpen}
-        onClose={deleteConfirmDisc.onClose}
-        content="Are you sure you want to delete this patient?"
-        action={onDeleteSubmit}
+      <div className="button-area">
+        <NewPatientButton onClick={createModalDisc.onOpen} />
+      </div>
+      <CreatePatientModal
+        disclosure={createModalDisc}
+        fields={getFormFields()}
+        onSubmit={onCreateSubmit}
+      />
+      <EditPatientModal
+        disclosure={editModalDisc}
+        fields={getFormFields(
+          selectedPatientId
+            ? patients.find((p) => p.id === selectedPatientId)
+            : null
+        )}
+        onSubmit={onUpdateSubmit}
+      />
+      <DeletePatientModal
+        disclosure={deleteConfirmDisc}
+        onSubmit={onDeleteSubmit}
       />
     </div>
   );
