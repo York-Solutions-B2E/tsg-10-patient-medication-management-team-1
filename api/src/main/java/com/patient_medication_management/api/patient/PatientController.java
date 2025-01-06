@@ -3,11 +3,16 @@ package com.patient_medication_management.api.patient;
 import com.patient_medication_management.api.dto.responses.PatientDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping(path = "api/patients")
@@ -20,12 +25,6 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    // Endpoint to fetch all patients
-    @GetMapping
-    public List<PatientDTO> getAllPatients() {
-        return patientService.getAllPatients();
-    }
-
     // Endpoint to create a new Patient
     @PostMapping
     public ResponseEntity<PatientDTO> createPatient(@RequestBody @Valid PatientDTO patientDTO) {
@@ -34,10 +33,13 @@ public class PatientController {
 
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PatientDTO> getPatientById(@PathVariable String id) {
-        PatientDTO patient = patientService.getPatientById(id);
-        return ResponseEntity.ok(patient);
+    @GetMapping
+    public ResponseEntity<Page<PatientDTO>> getPatients(
+            @RequestParam(required = false, defaultValue = "none") String filterName,
+            @RequestParam(required = false, defaultValue = "") String filterValue,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(patientService.getPatients(filterName, filterValue, pageable));
     }
 
     @PutMapping("/{id}")
