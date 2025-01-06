@@ -66,6 +66,10 @@ const PrescriptionsPage = () => {
       renderCell: (params) => {
         return (
           <CancelButton
+            disabled={
+              params.row.status === "CANCELLED" ||
+              params.row.status === "PICKED_UP"
+            }
             onClick={() => {
               selectedPrescriptionId(params.row.id);
               cancelModalDisc.onOpen;
