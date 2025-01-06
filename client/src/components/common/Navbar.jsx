@@ -1,10 +1,17 @@
 import "../../styles/Navbar.scss";
 
-import { Button } from "@mui/material";
+import Button from "./Button";
+
+import {
+  GroupSharp,
+  MedicationSharp,
+  DrawSharp,
+  LocalHospitalSharp,
+} from "@mui/icons-material";
 
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Navbar = ({ isLoggedIn, logout }) => {
+const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -12,55 +19,57 @@ const Navbar = ({ isLoggedIn, logout }) => {
     <nav className="navbar">
       {/* Home Link */}
       <div className="nav-left">
-        <Button onClick={() => navigate("/patients")} className="nav-item">
-          Home
-        </Button>
+        <Button
+          onClick={() => navigate("/patients")}
+          type="nav-item home"
+          text="Home"
+          icon={<LocalHospitalSharp />}
+        />
       </div>
 
       {/* Title in the Center */}
       <div className="nav-center">Medical Prescription Manager</div>
-
+      <span className="nav-center-subtitle">
+        {userInfo && `Dr. ${userInfo.firstName} ${userInfo.lastName}`}
+      </span>
       {/* Links on the Right */}
       {isLoggedIn && (
         <div className="nav-right">
           <Button
             onClick={() => navigate("/patients")}
-            // variant={pathname.includes("/patients") ? "outlined" : "outlined"}
-            className={
-              `nav-item` + (pathname.includes("/patients") ? " active" : "")
-            }
-            // className="nav-item"
-          >
-            Patient Management
-          </Button>
+            selected={pathname.includes("/patients")}
+            type="nav-tab"
+            text="Patients"
+            tooltipText="Patient Management"
+            icon={<GroupSharp />}
+          />
+
           <Button
             onClick={() => navigate("/prescriptions")}
-            // variant={pathname.includes("/prescriptions") && !pathname.includes("/create") ? "outlined" : "outlined"}
-            className={
-              `nav-item` +
-              (pathname.includes("/prescriptions") &&
+            selected={
+              pathname.includes("/prescriptions") &&
               !pathname.includes("/create")
-                ? " active"
-                : "")
             }
-            // className="nav-item"
-          >
-            Prescription Management
-          </Button>
+            type="nav-tab"
+            text="Prescriptions"
+            tooltipText="Prescription Management"
+            icon={<MedicationSharp />}
+          />
           <Button
             onClick={() => navigate("/prescriptions/create")}
-            // variant={pathname.includes("/prescriptions/create") ? "outlined" : "outlined"}
-            className={
-              `nav-item` +
-              (pathname.includes("/prescriptions/create") ? " active" : "")
-            }
-            // className="nav-item"
-          >
-            New Prescription
-          </Button>
-          <Button onClick={logout} className="nav-item logout">
-            Logout
-          </Button>
+            selected={pathname.includes("/prescriptions/create")}
+            type="nav-tab"
+            text="New Prescription"
+            tooltipText="Create New Prescription"
+            icon={<DrawSharp />}
+          />
+          <Button
+            loading={isLoading}
+            onClick={logout}
+            type="nav-tab"
+            text="Logout"
+            tooltipText="Logout"
+          />
         </div>
       )}
     </nav>

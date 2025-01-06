@@ -5,11 +5,16 @@ import "./App.css";
 import { useAppContext } from "./context/AppContext";
 
 function App() {
-  const { doctorUser, handleLogout } = useAppContext();
+  const { doctorUser, handleLogout, isLoading } = useAppContext();
   return (
     <>
-      <Navbar isLoggedIn={true} logout={handleLogout} />
-      <Router isLoggedIn={true} />
+      <Navbar
+        isLoggedIn={doctorUser ? true : false}
+        logout={handleLogout}
+        isLoading={isLoading}
+        userInfo={doctorUser}
+      />
+      <Router isLoggedIn={doctorUser ? true : false} />
     </>
   );
 }
