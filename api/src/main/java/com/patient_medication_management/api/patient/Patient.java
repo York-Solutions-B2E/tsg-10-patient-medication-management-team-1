@@ -18,15 +18,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Builder
 @Entity
 @Table(name = "patients")
 public class Patient {
 
     @Id
     @Column(name = "patient_id", unique = true, nullable = false, length = 8)
-    private String id; // Unique 8-character ID
+    private String patientId; // Unique 8-character ID
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -51,6 +50,7 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @Builder.Default
     private List<Prescription> prescriptions = new ArrayList<>();
 
     @CreationTimestamp
@@ -59,8 +59,8 @@ public class Patient {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Patient(String id, String firstName, String lastName, String email, String phone, String dob, PatientGender gender, Address address) {
-        this.id = id;
+    public Patient(String patientId, String firstName, String lastName, String email, String phone, String dob, PatientGender gender, Address address) {
+        this.patientId = patientId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

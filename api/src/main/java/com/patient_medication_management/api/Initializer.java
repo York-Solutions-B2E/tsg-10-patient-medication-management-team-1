@@ -90,11 +90,11 @@ public class Initializer implements CommandLineRunner {
     }
 
     private String generateUniquePatientId() {
-        String uniqueId;
+        String patientId;
         do {
-            uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        } while (patientRepository.existsById(uniqueId)); // Check if it already exists
-        return uniqueId;
+            patientId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        } while (patientRepository.existsById(patientId)); // Check if it already exists
+        return patientId;
     }
 
 }

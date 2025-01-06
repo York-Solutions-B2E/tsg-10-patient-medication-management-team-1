@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface MedicationRepository extends JpaRepository<Medication, Long> {
-    boolean existsByMedicationName(String medicationName); // Updated method name
+    boolean existsByMedicationName(String medicationName);
 
-    Optional<Medication> findByMedicationName(String medicationName); // Updated method name
+    Optional<Medication> findByMedicationName(String medicationName);
 }
