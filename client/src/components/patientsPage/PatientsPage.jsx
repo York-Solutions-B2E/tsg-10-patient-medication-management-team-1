@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
-import "../../styles/patients-page.scss";
+// import "../../styles/patients-page.scss";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";
-import { Tooltip, IconButton } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import DeletePatientModal from "./DeletePatientModal.jsx";
+import CreatePatientModal from "./CreatePatientModal.jsx";
+import EditPatientModal from "./EditPatientModal.jsx";
+import NewPatientButton from "./NewPatientButton.jsx";
+import EditPatientButton from "./EditPatientButton.jsx";
+import DeletePatientButton from "./DeletePatientButton.jsx";
+import NewPatientPrescriptionButton from "./NewPatientPrescriptionButton.jsx";
+
+import useDisclosure from "../../hooks/useDisclosure.js";
+
+import states from "../../utils/states.js";
 
 const PatientsPage = () => {
   const [searchParams] = useSearchParams();
@@ -15,10 +24,23 @@ const PatientsPage = () => {
   const [limit] = useState(10);
   const [totalLoadedPages, setTotalLoadedPages] = useState(0);
   const [lastPage, setLastPage] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
 
-  const { handleGetPatients, isLoading } = useAppContext();
+  const createModalDisc = useDisclosure();
+  const editModalDisc = useDisclosure();
+  const deleteConfirmDisc = useDisclosure();
+
+  const {
+    handleGetPatients,
+    handleCreatePatient,
+    handleUpdatePatient,
+    handleDeletePatient,
+    isLoading,
+  } = useAppContext();
 
   const navigate = useNavigate();
+
+  // DataGrid columns
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -34,17 +56,12 @@ const PatientsPage = () => {
       headerName: "Prescriptions",
       width: 150,
       renderCell: (params) => (
-        <Tooltip title="View Prescriptions">
-          <button
-            onClick={() =>
-              navigate(
-                `/prescriptions?filter=patientId&filterValue=${params.id}`
-              )
-            }
-          >
-            {params.value}
-          </button>
-        </Tooltip>
+        <NewPatientPrescriptionButton
+          onClick={() => {
+            navigate(`/prescriptions/create?patientId=${params.row.id}`);
+          }}
+          prescriptionCount={params.row.prescriptionCount}
+        />
       ),
     },
     {
@@ -53,22 +70,27 @@ const PatientsPage = () => {
       width: 150,
       renderCell: (params) => (
         <>
-          <Tooltip title="Edit Patient">
-            <IconButton onClick={() => console.log("Edit Modal ToDo")}>
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete Patient">
-            <IconButton onClick={() => console.log(params)}>
-              <Delete />
-            </IconButton>
-          </Tooltip>
+          <EditPatientButton
+            onClick={() => {
+              setSelectedPatientId(params.row.id);
+              editModalDisc.onOpen();
+            }}
+          />
+
+          <DeletePatientButton
+            onClick={() => {
+              setSelectedPatientId(params.row.id);
+              deleteConfirmDisc.onOpen();
+            }}
+          />
         </>
       ),
       sortable: false,
       filterable: false,
     },
   ];
+
+  // Search filter options and methods
 
   const filterOptions = [
     { value: "id", label: "ID" },
@@ -85,6 +107,129 @@ const PatientsPage = () => {
     navigate(`/patients?filter=${name}&filterValue=${value}`, {
       replace: true,
     });
+  };
+
+  // Form fields for create and edit modals
+
+  const getFormFields = (patient = null) => [
+    {
+      name: "firstName",
+      type: "text",
+      label: "First Name",
+      required: true,
+      defaultValue: patient ? patient.firstName : "",
+    },
+    {
+      name: "lastName",
+      type: "text",
+      label: "Last Name",
+      required: true,
+      defaultValue: patient ? patient.lastName : "",
+    },
+    {
+      name: "dob",
+      type: "date",
+      label: "Date of Birth",
+      required: true,
+      defaultValue: patient ? patient.dob : "",
+    },
+    {
+      name: "gender",
+      type: "select",
+      label: "Gender",
+      options: [
+        { value: "MALE", label: "Male" },
+        { value: "FEMALE", label: "Female" },
+      ],
+      required: true,
+      defaultValue: patient ? patient.gender : "",
+    },
+    {
+      name: "email",
+      type: "email",
+      label: "Email",
+      required: true,
+      validation: "email",
+      defaultValue: patient ? patient.email : "",
+    },
+    {
+      name: "phone",
+      type: "text",
+      label: "Phone",
+      required: true,
+      validation: "phone",
+      defaultValue: patient ? patient.phone : "",
+    },
+    { type: "divider", label: "Address" },
+    {
+      name: "streetOne",
+      type: "text",
+      label: "Street 1",
+      required: true,
+      defaultValue: patient ? patient.address.streetOne : "",
+    },
+    {
+      name: "streetTwo",
+      type: "text",
+      label: "Street 2",
+      defaultValue: patient ? patient.address.streetTwo : "",
+    },
+    {
+      name: "city",
+      type: "text",
+      label: "City",
+      required: true,
+      defaultValue: patient ? patient.address.city : "",
+    },
+    {
+      name: "state",
+      type: "select",
+      label: "State",
+      options: states,
+      autocomplete: true,
+      required: true,
+      defaultValue: patient ? patient.address.state : "",
+    },
+    {
+      name: "zip",
+      type: "text",
+      label: "Zip",
+      required: true,
+      validation: "zip",
+      defaultValue: patient ? patient.address.zip : "",
+    },
+  ];
+
+  // Reset method to clear the page and reload data
+
+  const resetPage = () => {
+    setPatients([]);
+    setTotalLoadedPages(0);
+    setLastPage(false);
+    setPage(0);
+  };
+
+  // Submit methods for create, update, and delete
+
+  const onCreateSubmit = async (values) => {
+    const newPatient = await handleCreatePatient(values);
+    createModalDisc.onClose();
+    resetPage();
+    navigate(`/patients?filterName=id&filterValue=${newPatient.id}`);
+  };
+
+  const onUpdateSubmit = async (values) => {
+    const updatedPatient = await handleUpdatePatient(values);
+    editModalDisc.onClose();
+    resetPage();
+    navigate(`/patients?filterName=id&filterValue=${updatedPatient.id}`);
+  };
+
+  const onDeleteSubmit = async () => {
+    await handleDeletePatient(selectedPatientId);
+    deleteConfirmDisc.onClose();
+    resetPage();
+    navigate("/patients");
   };
 
   useEffect(() => {
@@ -130,6 +275,27 @@ const PatientsPage = () => {
         totalPages={totalLoadedPages}
         pageSize={limit}
         searchFunction={handleSearch}
+      />
+      <div className="button-area">
+        <NewPatientButton onClick={createModalDisc.onOpen} />
+      </div>
+      <CreatePatientModal
+        disclosure={createModalDisc}
+        fields={getFormFields()}
+        onSubmit={onCreateSubmit}
+      />
+      <EditPatientModal
+        disclosure={editModalDisc}
+        fields={getFormFields(
+          selectedPatientId
+            ? patients.find((p) => p.id === selectedPatientId)
+            : null
+        )}
+        onSubmit={onUpdateSubmit}
+      />
+      <DeletePatientModal
+        disclosure={deleteConfirmDisc}
+        onSubmit={onDeleteSubmit}
       />
     </div>
   );
