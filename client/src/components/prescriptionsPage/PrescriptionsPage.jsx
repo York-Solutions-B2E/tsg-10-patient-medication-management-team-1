@@ -3,18 +3,14 @@ import "../../styles/patients-page.scss";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";
-import BasicModal from "../common/BasicModal.jsx";
-import { Tooltip, IconButton } from "@mui/material";
-import {
-  ContentPasteSearchSharp,
-  CancelPresentationSharp,
-} from "@mui/icons-material";
+import CancelButton from "./CancelButton.jsx";
+import DetailsButton from "./DetailsButton.jsx";
+import ConfirmModal from "./ConfirmModal.jsx";
+import DetailsModal from "./DetailsModal.jsx";
 import useDisclosure from "../../hooks/useDisclosure.js";
 
 const PrescriptionsPage = () => {
   const [searchParams] = useSearchParams();
-  const [filter] = useState(searchParams.get("filter") || null);
-  const [filterValue] = useState(searchParams.get("filterValue") || null);
   const [prescriptions, setPrescriptions] = useState([]);
   const [page, setPage] = useState(0);
   const [limit] = useState(10);
@@ -32,30 +28,34 @@ const PrescriptionsPage = () => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
+    { field: "prescriptionId", headerName: "Prescription ID", width: 150 },
     { field: "patientName", headerName: "Patient", width: 150 },
+    { field: "patientId", headerName: "Patient ID", width: 90 },
     {
       field: "medicationName",
       headerName: "Medication",
       width: 150,
     },
+    { field: "medicationCode", headerName: "Medication Code", width: 150 },
     { field: "createdAt", headerName: "Date Issued", width: 180 },
     { field: "updateAt", headerName: "Last Updated", width: 180 },
     { field: "doctorName", headerName: "Issuing Doctor", width: 180 },
     { field: "pharmacyName", headerName: "Pharmacy", width: 180 },
     { field: "dosage", headerName: "Dosage", width: 150 },
+    { field: "quantity", headerName: "Quantity", width: 90 },
     { field: "status", headerName: "Status", width: 150 },
     {
       field: "details",
       headerName: "",
       width: 130,
       renderCell: (params) => {
-        setSelectedPrescriptionId(params.row.id);
         return (
-          <Tooltip title="View Instructions">
-            <IconButton onClick={detailsModalDisc.onOpen}>
-              <ContentPasteSearchSharp />
-            </IconButton>
-          </Tooltip>
+          <DetailsButton
+            onClick={() => {
+              setSelectedPrescriptionId(params.row.id);
+              detailsModalDisc.onOpen;
+            }}
+          />
         );
       },
     },
@@ -64,25 +64,26 @@ const PrescriptionsPage = () => {
       headerName: "",
       width: 150,
       renderCell: (params) => {
-        setSelectedPrescriptionId(params.row.id);
         return (
-          <>
-            <Tooltip title="Cancel Prescription">
-              <IconButton onClick={cancelModalDisc.onOpen}>
-                <CancelPresentationSharp />
-              </IconButton>
-            </Tooltip>
-          </>
+          <CancelButton
+            onClick={() => {
+              selectedPrescriptionId(params.row.id);
+              cancelModalDisc.onOpen;
+            }}
+          />
         );
       },
     },
   ];
 
   const filterOptions = [
-    { value: "id", label: "ID" },
-    { value: "doctorName", label: "Doctor Name" },
+    { value: "prescriptionId", label: "Unique ID" },
+    { value: "patientId", label: "Patient ID" },
     { value: "patientName", label: "Patient Name" },
-    { value: "pharmacy", label: "Pharmacy" },
+    { value: "doctorName", label: "Doctor Name" },
+    { value: "pharmacyName", label: "Pharmacy" },
+    { value: "medicationName", label: "Medication" },
+    { value: "medicationCode", label: "Medication Code" },
     { value: "status", label: "Status" },
   ];
 
@@ -96,51 +97,32 @@ const PrescriptionsPage = () => {
     });
   };
 
-  const cancelPrescription = async (prescriptionId) => {
-    await handleCancelPrescription(prescriptionId);
-    setPrescriptions([]);
-    setTotalLoadedPages(0);
-    setLastPage(false);
-    setPage(0);
+  const cancelPrescription = async () => {
+    const cancelledPrescription = await handleCancelPrescription(
+      selectedPrescriptionId
+    );
+    setPrescriptions(
+      prescriptions.map((p) =>
+        p.id === selectedPrescriptionId ? cancelledPrescription : p
+      )
+    );
+    setSelectedPrescriptionId(null);
+    cancelModalDisc.onClose();
   };
-
-  const ConfirmModal = () => (
-    <BasicModal
-      title="Cancel Prescription"
-      content="Are you sure you want to cancel this prescription?"
-      action={() => {
-        cancelPrescription(selectedPrescriptionId);
-        cancelModalDisc.onClose();
-      }}
-      isLoading={isLoading}
-      isOpen={cancelModalDisc.isOpen}
-      onClose={cancelModalDisc.onClose}
-    />
-  );
-
-  const DetailsModal = () => (
-    <BasicModal
-      content={
-        prescriptions.find((p) => p.id === selectedPrescriptionId).instructions
-      }
-      isOpen={detailsModalDisc.isOpen}
-      onClose={detailsModalDisc.onClose}
-    />
-  );
 
   useEffect(() => {
     const fetchPatients = async () => {
       const pageToLoad = page === 0 ? 0 : page - 1;
-      const { content, pageNumber, last } = await handleGetPrescriptions(
+      const { content, number, last } = await handleGetPrescriptions(
         pageToLoad,
         limit,
-        filter,
-        filterValue
+        searchParams.get("filterName") || null,
+        searchParams.get("filterValue") || null
       );
       setPrescriptions(content);
-      setPage(pageNumber + 1);
+      setPage(number + 1);
       setLastPage(last);
-      setTotalLoadedPages(pageNumber + 1);
+      setTotalLoadedPages(number + 1);
     };
     if (prescriptions.length === 0 || (!lastPage && page > totalLoadedPages)) {
       fetchPatients();
@@ -149,8 +131,7 @@ const PrescriptionsPage = () => {
     handleGetPrescriptions,
     page,
     limit,
-    filter,
-    filterValue,
+    searchParams,
     lastPage,
     prescriptions,
     totalLoadedPages,
@@ -172,8 +153,18 @@ const PrescriptionsPage = () => {
         pageSize={limit}
         searchFunction={handleSearch}
       />
-      <ConfirmModal />
-      <DetailsModal />
+      <ConfirmModal
+        confirm={cancelPrescription}
+        disclosure={cancelModalDisc}
+        isLoading={isLoading}
+      />
+      <DetailsModal
+        details={
+          prescriptions.find((p) => p.id === selectedPrescriptionId)
+            .instructions
+        }
+        disclosure={detailsModalDisc}
+      />
     </div>
   );
 };

@@ -17,8 +17,6 @@ import states from "../../utils/states.js";
 
 const PatientsPage = () => {
   const [searchParams] = useSearchParams();
-  const [filter] = useState(searchParams.get("filter") || null);
-  const [filterValue] = useState(searchParams.get("filterValue") || null);
   const [patients, setPatients] = useState([]);
   const [page, setPage] = useState(0);
   const [limit] = useState(10);
@@ -166,20 +164,20 @@ const PatientsPage = () => {
       type: "text",
       label: "Street 1",
       required: true,
-      defaultValue: patient ? patient.address.streetOne : "",
+      defaultValue: patient ? patient.streetOne : "",
     },
     {
       name: "streetTwo",
       type: "text",
       label: "Street 2",
-      defaultValue: patient ? patient.address.streetTwo : "",
+      defaultValue: patient ? patient.streetTwo : "",
     },
     {
       name: "city",
       type: "text",
       label: "City",
       required: true,
-      defaultValue: patient ? patient.address.city : "",
+      defaultValue: patient ? patient.city : "",
     },
     {
       name: "state",
@@ -188,7 +186,7 @@ const PatientsPage = () => {
       options: states,
       autocomplete: true,
       required: true,
-      defaultValue: patient ? patient.address.state : "",
+      defaultValue: patient ? patient.state : "",
     },
     {
       name: "zip",
@@ -196,7 +194,7 @@ const PatientsPage = () => {
       label: "Zip",
       required: true,
       validation: "zip",
-      defaultValue: patient ? patient.address.zip : "",
+      defaultValue: patient ? patient.zipCode : "",
     },
   ];
 
@@ -220,9 +218,10 @@ const PatientsPage = () => {
 
   const onUpdateSubmit = async (values) => {
     const updatedPatient = await handleUpdatePatient(values);
+    setPatients(
+      patients.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
+    );
     editModalDisc.onClose();
-    resetPage();
-    navigate(`/patients?filterName=id&filterValue=${updatedPatient.id}`);
   };
 
   const onDeleteSubmit = async () => {
@@ -235,16 +234,16 @@ const PatientsPage = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       const pageToLoad = page === 0 ? 0 : page - 1;
-      const { content, pageNumber, last } = await handleGetPatients(
+      const { content, number, last } = await handleGetPatients(
         pageToLoad,
         limit,
-        filter,
-        filterValue
+        searchParams.get("filterName") || null,
+        searchParams.get("filterValue") || null
       );
       setPatients(content);
-      setPage(pageNumber + 1);
+      setPage(number + 1);
       setLastPage(last);
-      setTotalLoadedPages(pageNumber + 1);
+      setTotalLoadedPages(number + 1);
     };
     if (patients.length === 0 || (!lastPage && page > totalLoadedPages)) {
       fetchPatients();
@@ -253,8 +252,7 @@ const PatientsPage = () => {
     handleGetPatients,
     page,
     limit,
-    filter,
-    filterValue,
+    searchParams,
     lastPage,
     patients,
     totalLoadedPages,
