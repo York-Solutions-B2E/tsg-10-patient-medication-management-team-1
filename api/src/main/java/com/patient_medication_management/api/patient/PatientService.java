@@ -106,8 +106,7 @@ public class PatientService {
         if (!patientRepository.existsById(patientDTO.getId())) {
             throw new IllegalArgumentException("Patient not found with ID: " + patientDTO.getId());
         }
-        Patient existingPatient = patientRepository.findById(patientDTO.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + patientDTO.getId()));
+        Patient existingPatient = patientRepository.findById(patientDTO.getId()).get();
 
         // Update fields of the existing Patient entity
         existingPatient.setFirstName(patientDTO.getFirstName());
@@ -117,11 +116,11 @@ public class PatientService {
         existingPatient.setEmail(patientDTO.getEmail());
         existingPatient.setPhone(patientDTO.getPhone());
 
-        // Update address if needed
-        if (patientDTO.getAddress() != null) {
-            Address updatedAddress = addressMapper.mapToEntity(patientDTO.getAddress());
-            existingPatient.setAddress(updatedAddress);
-        }
+        existingPatient.getAddress().setStreet1(patientDTO.getStreet1());
+        existingPatient.getAddress().setStreet2(patientDTO.getStreet2());
+        existingPatient.getAddress().setCity(patientDTO.getCity());
+        existingPatient.getAddress().setState(patientDTO.getState());
+        existingPatient.getAddress().setZipCode(patientDTO.getZipCode());
 
         // Save the updated Patient entity to the repository
         Patient updatedPatient = patientRepository.save(existingPatient);
