@@ -101,4 +101,32 @@ public class PatientService {
 
         return patients.map(patientMapper::mapToDTO);
     }
+
+    public PatientDTO updatePatient(PatientDTO patientDTO) {
+        if (!patientRepository.existsById(patientDTO.getId())) {
+            throw new IllegalArgumentException("Patient not found with ID: " + patientDTO.getId());
+        }
+        Patient existingPatient = patientRepository.findById(patientDTO.getId()).get();
+
+        // Update fields of the existing Patient entity
+        existingPatient.setFirstName(patientDTO.getFirstName());
+        existingPatient.setLastName(patientDTO.getLastName());
+        existingPatient.setDob(patientDTO.getDob());
+        existingPatient.setGender(patientDTO.getGender());
+        existingPatient.setEmail(patientDTO.getEmail());
+        existingPatient.setPhone(patientDTO.getPhone());
+
+        existingPatient.getAddress().setStreet1(patientDTO.getStreet1());
+        existingPatient.getAddress().setStreet2(patientDTO.getStreet2());
+        existingPatient.getAddress().setCity(patientDTO.getCity());
+        existingPatient.getAddress().setState(patientDTO.getState());
+        existingPatient.getAddress().setZipCode(patientDTO.getZipCode());
+
+        // Save the updated Patient entity to the repository
+        Patient updatedPatient = patientRepository.save(existingPatient);
+
+        // Map the updated Patient entity back to PatientDTO and return it
+        return patientMapper.mapToDTO(updatedPatient);
+
+    }
 }
