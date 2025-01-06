@@ -204,10 +204,16 @@ public class PrescriptionService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Prescription not found with ID: %s", prescriptionId))
                 );
+        if (prescription.getStatus() == PrescriptionStatus.CANCELLED) {
+            String message = "Patient has already been cancelled!";
+            throw new IllegalStateException(message);
+        }
+
         if (prescription.getStatus() == PrescriptionStatus.PICKED_UP) {
             String message = "Patient has already been picked up the prescription!";
             throw new IllegalStateException(message);
         }
+
 
         prescription.setStatus(PrescriptionStatus.CANCELLED);
         Prescription updatedPrescription = prescriptionRepository.save(prescription);

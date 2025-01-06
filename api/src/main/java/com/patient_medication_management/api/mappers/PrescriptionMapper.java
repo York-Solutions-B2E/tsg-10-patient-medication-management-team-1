@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PrescriptionMapper {
 
+    // Helper method to construct a full name from first and last names
     default String getFullName(String firstName, String lastName) {
         if (firstName == null && lastName == null) return null;
         StringBuilder name = new StringBuilder();
@@ -17,6 +18,8 @@ public interface PrescriptionMapper {
         return name.length() > 0 ? name.toString() : null;
     }
 
+    // Mapping for converting Prescription to PrescriptionDTO
+    @Mapping(target = "prescriptionId", source = "prescriptionId")
     @Mapping(target = "doctorName", expression = "java(prescription.getDoctor() == null ? null : getFullName(prescription.getDoctor().getFirstName(), prescription.getDoctor().getLastName()))")
     @Mapping(target = "patientName", expression = "java(prescription.getPatient() == null ? null : getFullName(prescription.getPatient().getFirstName(), prescription.getPatient().getLastName()))")
     @Mapping(target = "patientId", source = "patient.patientId")

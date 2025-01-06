@@ -29,7 +29,7 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Primary key
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String prescriptionId; // Unique ID assigned on submission
 
     @Column(nullable = false)

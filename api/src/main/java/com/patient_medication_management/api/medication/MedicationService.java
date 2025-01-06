@@ -19,8 +19,8 @@ public class MedicationService {
     }
 
     public MedicationDTO createMedication(MedicationDTO medicationDTO) {
-        if (medicationRepository.existsByMedicationName(medicationDTO.getName())) {
-            throw new IllegalArgumentException("Medication with name " + medicationDTO.getName() + " already exists.");
+        if (medicationRepository.existsByMedicationName(medicationDTO.getMedicineName())) {
+            throw new IllegalArgumentException("Medication with name " + medicationDTO.getMedicineName() + " already exists.");
         }
 
         Medication medication = medicationMapper.mapToEntity(medicationDTO);
