@@ -208,6 +208,37 @@ class ManagementApi {
     return this.request(`/prescriptions/${prescriptionId}`);
   }
 
+  // Pharmacy methods
+
+  /**
+   * Get all pharmacies
+   *
+   * Use async function and await this method to get the response data.
+   * @returns {Promise<PharmacyData[]>} {PharmacyData[]}
+   */
+  static async getPharmacies() {
+    return this.request("/pharmacies");
+  }
+
+  /**
+   * Create a new pharmacy
+   *
+   * Use async function and await this method to get the response data.
+   * @param {{
+   *   name: String,
+   *  address: String,
+   * city: String,
+   * state: String,
+   * zip: String,
+   * phone: String,
+   * email: String,
+   * }} pharmacyData
+   * @returns {Promise<PharmacyData>} {PharmacyData}
+   */
+  static async createPharmacy(pharmacyData) {
+    return this.request("/pharmacies", "post", pharmacyData);
+  }
+
   // Authentication methods
 
   /**

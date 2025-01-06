@@ -55,7 +55,12 @@ export const AppProvider = ({ children }) => {
   };
 
   // Patient functions
-
+  /**
+   * get patient by id
+   *
+   * @param {Number} patientId
+   * @returns
+   */
   const handleGetPatient = async (patientId) => {
     setIsLoading(true);
     try {
@@ -182,6 +187,48 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Pharmacy functions
+
+  const handleGetPharmacies = async () => {
+    setIsLoading(true);
+    try {
+      return await ManagementApi.getAllPharmacies();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddPharmacy = async (pharmacyData) => {
+    setIsLoading(true);
+    try {
+      return await ManagementApi.createPharmacy(pharmacyData);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Medication functions
+
+  /**
+   * Get all medications
+   *
+   * @returns {Promise<MedicationData[]>} {MedicationData[]}
+   */
+  const handleGetMedications = async () => {
+    setIsLoading(true);
+    try {
+      return await ManagementApi.getAllMedications();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (cookies["XSRF-TOKEN"] && !doctorUser) {
       handleAuthenticate();
@@ -212,6 +259,9 @@ export const AppProvider = ({ children }) => {
         handleCancelPrescription,
         handleGetPrescription,
         handleGetPrescriptions,
+        handleGetPharmacies,
+        handleAddPharmacy,
+        handleGetMedications,
       }}
     >
       {children}
