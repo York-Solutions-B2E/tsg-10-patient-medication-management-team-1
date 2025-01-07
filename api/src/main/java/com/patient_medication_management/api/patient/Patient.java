@@ -24,6 +24,9 @@ import java.util.List;
 public class Patient {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "patient_id", unique = true, nullable = false, length = 8)
     private String patientId; // Unique 8-character ID
 

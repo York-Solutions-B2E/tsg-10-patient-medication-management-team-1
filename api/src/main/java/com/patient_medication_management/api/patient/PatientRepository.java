@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, String> {
+public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     Page<Patient> findByPatientIdContainingIgnoreCase(String patientId, Pageable pageable);
 
@@ -53,10 +55,9 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
     void deleteByPatientId(String patientId);
 
+    Optional<Patient> findByPatientId(String patientId);
+
     // address i a separate table that is linked to the patient table
-
-
-
 
 
 }

@@ -10,6 +10,7 @@ import org.mapstruct.Mappings;
 public interface PatientMapper {
 
     @Mappings({
+            @Mapping(target = "id", source = "id"),
             @Mapping(target = "street1", source = "address.street1"),
             @Mapping(target = "street2", source = "address.street2"),
             @Mapping(target = "city", source = "address.city"),
@@ -19,7 +20,14 @@ public interface PatientMapper {
     })
     public abstract PatientDTO mapToDTO(Patient patient);
 
-    @Mapping(target = "address", ignore = true)
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "patientId", source = "patientId"),
+            @Mapping(target = "prescriptions", ignore = true),
+            @Mapping(target = "createdAt", ignore = true),
+            @Mapping(target = "updatedAt", ignore = true),
+            @Mapping(target = "address", ignore = true)
+    })
     public abstract Patient mapToEntity(PatientDTO patientDTO);
 
     default long getPrescriptionCount(Patient patient) {

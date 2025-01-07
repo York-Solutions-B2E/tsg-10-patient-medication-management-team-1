@@ -151,7 +151,7 @@ public class PrescriptionService {
     }
 
     private Patient findPatient(String patientId) {
-        return patientRepository.findById(patientId)
+        return patientRepository.findByPatientId(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Patient not found with ID: %s", patientId)
                 ));
