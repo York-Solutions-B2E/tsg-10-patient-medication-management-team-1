@@ -5,6 +5,7 @@ import com.patient_medication_management.api.mappers.MedicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,11 @@ public class MedicationService {
             throw new IllegalArgumentException("Medication with name " + medicationName + " not found.");
         }
         return medicationMapper.mapToDTO(medicationOptional.get());
+    }
+
+    public List<MedicationDTO> getMedications() {
+        List<Medication> medications = medicationRepository.findAll();
+        return medicationMapper.mapToDTOs(medications);
     }
 
 }
