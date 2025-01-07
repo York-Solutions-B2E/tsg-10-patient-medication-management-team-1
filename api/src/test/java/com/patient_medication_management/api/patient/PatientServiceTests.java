@@ -48,7 +48,7 @@ class PatientServiceTest {
 
         // Initialize the PatientDTO with setter values (if needed)
         patientDTO = new PatientDTO();
-        patientDTO.setId("1");
+        patientDTO.setId(1L);
         patientDTO.setFirstName("John");
         patientDTO.setLastName("Doe");
         patientDTO.setEmail("john.doe@example.com");
