@@ -35,7 +35,7 @@ public class PrescriptionController {
         return ResponseEntity.ok(prescriptionService.getPrescriptions(filterName, filterValue, pageable));
     }
 
-    @PutMapping("/{prescriptionId}/cancel")
+    @PatchMapping("/{prescriptionId}/cancel")
     public ResponseEntity<PrescriptionDTO> cancelPrescription(@PathVariable("prescriptionId") String prescriptionId) {
         return ResponseEntity.ok(prescriptionService.cancelPrescription(prescriptionId));
     }
