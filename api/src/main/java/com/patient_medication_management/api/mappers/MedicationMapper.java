@@ -5,6 +5,8 @@ import com.patient_medication_management.api.medication.Medication;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 
 @Mapper(componentModel = "spring")
 public interface MedicationMapper {
@@ -19,4 +21,8 @@ public interface MedicationMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Medication mapToEntity(MedicationDTO medicationDTO);
+
+    @Mapping(target = "medicineName", source = "medicationName")
+    @Mapping(target = "medicineCode", source = "medicationCode")
+    List<MedicationDTO> mapToDTOs(List<Medication> medications);
 }
