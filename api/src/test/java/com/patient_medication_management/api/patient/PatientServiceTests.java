@@ -37,7 +37,7 @@ class PatientServiceTest {
         patient = new Patient();
 
         // Use setters to assign values to the Patient object
-        patient.setId("1");
+        patient.setPatientId("1");
         patient.setFirstName("John");
         patient.setLastName("Doe");
         patient.setEmail("john.doe@example.com");
