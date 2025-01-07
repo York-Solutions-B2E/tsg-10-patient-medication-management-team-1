@@ -46,7 +46,7 @@ class PatientControllerTest {
         ResponseEntity<Page<PatientDTO>> response = patientController.getPatients("none", "", pageable);
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals("12345678", Objects.requireNonNull(response.getBody()).getContent().get(0).getId());
+        assertEquals("12345678", Objects.requireNonNull(response.getBody()).getContent().get(0).getPatientId());
         assertEquals(0L, response.getBody().getPageable().getPageNumber());
 
 
@@ -62,7 +62,7 @@ class PatientControllerTest {
         when(patientService.getPatients(anyString(), anyString(), any(Pageable.class))).thenReturn(page);
         ResponseEntity<Page<PatientDTO>> response = patientController.getPatients("firstName", "John", pageable);
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals("12345678", Objects.requireNonNull(response.getBody()).getContent().get(0).getId());
+        assertEquals("12345678", Objects.requireNonNull(response.getBody()).getContent().get(0).getPatientId());
         assertEquals(0L, response.getBody().getPageable().getPageNumber());
         assertNotEquals(2L, response.getBody().getTotalPages());
 
@@ -70,8 +70,8 @@ class PatientControllerTest {
 
     private static List<PatientDTO> getPatientDTOS() {
         return List.of(
-                new PatientDTO("12345678", "John", "Doe", "2000-01-01", PatientGender.MALE, "email@email.com", "1234567890", "123 Main St", "Apt 1", "Springfield", "IL", "62701",  32L),
-                new PatientDTO("87654321", "Jane", "Smith", "1990-01-01", PatientGender.FEMALE, "email@email.com", "1234567890", "123 Main St", "Apt 1", "Springfield", "IL", "62701",  12L)
+                new PatientDTO(1L,"12345678", "John", "Doe", "2000-01-01", PatientGender.MALE, "email@email.com", "1234567890", "123 Main St", "Apt 1", "Springfield", "IL", "62701",  32L),
+                new PatientDTO(2L, "87654321", "Jane", "Smith", "1990-01-01", PatientGender.FEMALE, "email@email.com", "1234567890", "123 Main St", "Apt 1", "Springfield", "IL", "62701",  12L)
         );
     }
 
