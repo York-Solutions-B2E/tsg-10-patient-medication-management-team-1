@@ -1,6 +1,5 @@
 package com.patient_medication_management.api.patient;
 
-import com.patient_medication_management.api.dto.responses.PatientDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, String> {
 
-    Page<Patient> findByIdContainingIgnoreCase(String id, Pageable pageable);
+    Page<Patient> findByPatientIdContainingIgnoreCase(String patientId, Pageable pageable);
 
     Page<Patient> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
 
@@ -27,40 +26,28 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
     @Query("SELECT p FROM Patient p " +
             "LEFT JOIN p.address a " +  // Join Patient with Address
-            "WHERE p.firstName LIKE %:searchTerm% " +
-            "OR p.lastName LIKE %:searchTerm% " +
-            "OR p.dob LIKE %:searchTerm% " +
-            "OR p.gender LIKE %:searchTerm% " +
-            "OR a.streetOne LIKE %:searchTerm% " +
-            "OR a.streetTwo LIKE %:searchTerm% " +
-            "OR a.city LIKE %:searchTerm% " +
-            "OR a.state LIKE %:searchTerm% " +
-            "OR a.zip LIKE %:searchTerm%")
-    Page<Patient> findAllContaining(String filterName, Pageable pageable);
+            "Where p.patientId LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.firstName LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.lastName LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.dob LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.gender LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.phone LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR p.email LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.street1 LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.street2 LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.city LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.state LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.zipCode LIKE LOWER(CONCAT(%:searchTerm%))")
+    Page<Patient> findAllContaining(@Param("searchTerm") String searchTerm, Pageable pageable);
 
     @Query("SELECT p FROM Patient p " +
-            "LEFT JOIN p.pharmacy ph " +  // Join Patient with Pharmacy
-            "WHERE ph.name LIKE %:searchTerm% " +
-            "OR ph.phone LIKE %:searchTerm% " +
-            "OR ph.email LIKE %:searchTerm% " +
-            "OR ph.address.streetOne LIKE %:searchTerm% " +
-            "OR ph.address.streetTwo LIKE %:searchTerm% " +
-            "OR ph.address.city LIKE %:searchTerm% " +
-            "OR ph.address.state LIKE %:searchTerm% " +
-            "OR ph.address.zip LIKE %:searchTerm%")
-    Page<Patient> findByAddressContainingIgnoreCase(String address, Pageable pageable);
-
-    @Query("SELECT p FROM Patient p " +
-            "LEFT JOIN p.pharmacy ph " +  // Join Patient with Pharmacy
-            "WHERE ph.name LIKE %:searchTerm% " +
-            "OR ph.phone LIKE %:searchTerm% " +
-            "OR ph.email LIKE %:searchTerm% " +
-            "OR ph.address.streetOne LIKE %:searchTerm% " +
-            "OR ph.address.streetTwo LIKE %:searchTerm% " +
-            "OR ph.address.city LIKE %:searchTerm% " +
-            "OR ph.address.state LIKE %:searchTerm% " +
-            "OR ph.address.zip LIKE %:searchTerm%")
-    Page<Patient> findByPharmacyContainingIgnoreCase(String pharmacy, Pageable pageable);
+            "LEFT JOIN p.address a " +  // Join Patient with Pharmacy
+            "Where a.street1 LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.street2 LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.city LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.state LIKE LOWER(CONCAT(%:searchTerm%)) " +
+            "OR a.zipCode LIKE LOWER(CONCAT(%:searchTerm%))")
+    Page<Patient> findByAddressContainingIgnoreCase(@Param("searchTerm") String searchTerm, Pageable pageable);
 
     boolean existsByPatientId(String patientId);
 
