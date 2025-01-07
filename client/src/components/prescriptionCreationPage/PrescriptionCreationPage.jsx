@@ -39,11 +39,11 @@ const PrescriptionCreationPage = () => {
       required: true,
     },
     {
-      name: "medicationCode",
+      name: "medicationId",
       label: "Medication",
       type: "select",
       options: medications.map((m) => {
-        return { value: m.id, label: `${m.id} ${m.name}` };
+        return { value: m.id, label: `${m.medicineCode} ${m.name}` };
       }),
       autocomplete: true,
       required: true,
