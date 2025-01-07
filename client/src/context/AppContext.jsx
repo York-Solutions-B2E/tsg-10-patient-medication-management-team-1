@@ -46,6 +46,7 @@ export const AppProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const doctorUser = await ManagementApi.authenticateDoctorUser();
+      console.log(doctorUser);
       setDoctorUser(doctorUser);
     } catch (error) {
       setError(error);
@@ -230,6 +231,8 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log("cookies", cookies["XSRF-TOKEN"]);
+    console.log("doctorUser", doctorUser);
     if (cookies["XSRF-TOKEN"] && !doctorUser) {
       handleAuthenticate();
     }
