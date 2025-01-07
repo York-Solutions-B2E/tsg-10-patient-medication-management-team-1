@@ -21,6 +21,6 @@ public interface MedicationMapper {
     @Mapping(target = "updatedAt", ignore = true)
     Medication mapToEntity(MedicationDTO medicationDTO);
 
-    
+
     List<MedicationDTO> mapToDTOs(List<Medication> medications);
 }
