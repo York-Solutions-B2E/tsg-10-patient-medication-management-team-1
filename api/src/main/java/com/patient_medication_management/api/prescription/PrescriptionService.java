@@ -194,15 +194,27 @@ public class PrescriptionService {
     }
 
     private String generateUniquePrescriptionId() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        String randomAlphanumeric = generateRandomAlphanumeric(3);
+        return "PR" + randomAlphanumeric; // Prefix with PR
+    }
+
+    private String generateRandomAlphanumeric(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder result = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            result.append(characters.charAt(index));
+        }
+        return result.toString();
     }
 
     // Cancel prescription
-    public PrescriptionDTO cancelPrescription(String prescriptionId) {
+    public PrescriptionDTO cancelPrescription(Long id) {
         // Fetch and validate prescription
-        Prescription prescription = prescriptionRepository.findByPrescriptionId(prescriptionId)
+        Prescription prescription = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Prescription not found with ID: %s", prescriptionId))
+                        String.format("Prescription not found with ID: %s", id))
                 );
         if (prescription.getStatus() == PrescriptionStatus.CANCELLED) {
             String message = "Patient has already been cancelled!";

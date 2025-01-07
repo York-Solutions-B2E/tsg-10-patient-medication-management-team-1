@@ -75,10 +75,10 @@ public class Initializer implements CommandLineRunner {
 
 
         // Prescriptions
-        Prescription prescription1 = new Prescription("Take twice daily", UUID.randomUUID().toString().substring(0, 8),
+        Prescription prescription1 = new Prescription("Take twice daily", "PRF9S",
                 PrescriptionStatus.READY_FOR_PICKUP, "2024-01-01", "500mg", 30, medication1, doctor1, pharmacy1, patient1);
 
-        Prescription prescription2 = new Prescription("Take as needed", UUID.randomUUID().toString().substring(0, 8),
+        Prescription prescription2 = new Prescription("Take as needed", "PR8KA",
                 PrescriptionStatus.SENT, "2024-01-02", "200mg", 60, medication2, doctor2, pharmacy2, patient2);
 
         prescription1.setPatient(patient1);
