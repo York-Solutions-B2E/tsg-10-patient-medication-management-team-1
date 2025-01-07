@@ -67,13 +67,13 @@ public class PatientService {
     public Page<PatientDTO> getPatients(String filterName, String filterValue, Pageable pageable) {
         Page<Patient> patients;
 
-    // Handle null or empty filter cases
-    if (filterName == null || filterValue == null || filterName.trim().isEmpty() || filterValue.trim().isEmpty()) {
+        // Handle null or empty filter cases
+        if (filterName == null || filterValue == null || filterName.trim().isEmpty() || filterValue.trim().isEmpty()) {
             patients = patientRepository.findAll(pageable);
             return patients.map(patientMapper::mapToDTO);
         }
         switch (filterName) {
-            case "id":
+            case "patientId":
                 patients = patientRepository.findByPatientIdContainingIgnoreCase(filterValue, pageable);
             case "firstName":
                 patients = patientRepository.findByFirstNameContainingIgnoreCase(filterValue, pageable);
@@ -142,7 +142,7 @@ public class PatientService {
 
     }
 
-public void deletePatient(String id) {
+    public void deletePatient(String id) {
         patientRepository.deleteByPatientId(id);
     }
 

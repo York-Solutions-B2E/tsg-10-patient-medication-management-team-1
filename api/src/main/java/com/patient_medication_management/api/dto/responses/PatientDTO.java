@@ -10,7 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PatientDTO {
 
-    private String id;
+    private Long id;
+    private String patientId;
     private String firstName;
     private String lastName;
     private String dob;
