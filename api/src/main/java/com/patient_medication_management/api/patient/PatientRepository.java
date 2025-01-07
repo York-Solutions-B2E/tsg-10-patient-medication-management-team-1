@@ -62,6 +62,8 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
             "OR ph.address.zip LIKE %:searchTerm%")
     Page<Patient> findByPharmacyContainingIgnoreCase(String pharmacy, Pageable pageable);
 
+    boolean existsByPatientId(String patientId);
+
     // address i a separate table that is linked to the patient table
 
 
