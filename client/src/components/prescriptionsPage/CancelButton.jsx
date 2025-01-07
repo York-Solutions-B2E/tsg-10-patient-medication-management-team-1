@@ -1,9 +1,9 @@
 import { Tooltip, IconButton } from "@mui/material";
 import { CancelPresentationSharp } from "@mui/icons-material";
 
-const CancelButton = ({ onClick }) => (
+const CancelButton = ({ onClick, disabled }) => (
   <Tooltip title="Cancel Prescription">
-    <IconButton onClick={onClick}>
+    <IconButton disabled={disabled} onClick={onClick}>
       <CancelPresentationSharp />
     </IconButton>
   </Tooltip>
