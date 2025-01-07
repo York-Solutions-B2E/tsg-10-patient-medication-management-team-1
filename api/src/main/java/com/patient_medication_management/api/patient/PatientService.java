@@ -74,7 +74,7 @@ public class PatientService {
         }
         switch (filterName) {
             case "id":
-                patients = patientRepository.findByIdContainingIgnoreCase(filterValue, pageable);
+                patients = patientRepository.findByPatientIdContainingIgnoreCase(filterValue, pageable);
             case "firstName":
                 patients = patientRepository.findByFirstNameContainingIgnoreCase(filterValue, pageable);
                 break;
@@ -96,11 +96,8 @@ public class PatientService {
             case "address":
                 patients = patientRepository.findByAddressContainingIgnoreCase(filterValue, pageable);
                 break;
-            case "pharmacy":
-                patients = patientRepository.findByPharmacyContainingIgnoreCase(filterValue, pageable);
-                break;
             case "all":
-                patients = patientRepository.findAllContaining(filterName, pageable);
+                patients = patientRepository.findAllContaining(filterValue, pageable);
                 break;
             default:
                 patients = patientRepository.findAll(pageable);

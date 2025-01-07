@@ -62,7 +62,7 @@ public class Prescription {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Patient patient;
 
     @CreationTimestamp
