@@ -3,6 +3,7 @@ package com.patient_medication_management.api.address;
 import com.patient_medication_management.api.patient.Patient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "addresses")
 public class Address {
