@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "api/medications")
 public class MedicationController {
@@ -27,5 +29,10 @@ public class MedicationController {
     public ResponseEntity<MedicationDTO> getMedicationByName(@PathVariable String medicationName) {
         MedicationDTO medication = medicationService.getMedicationByName(medicationName);
         return ResponseEntity.ok(medication);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MedicationDTO>> getMedications() {
+        return ResponseEntity.ok(medicationService.getMedications());
     }
 }
