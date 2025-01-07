@@ -1,5 +1,5 @@
 import { Tooltip, IconButton } from "@mui/material";
-import { Edit } from "@material-ui/icons";
+import { Edit } from "@mui/icons-material";
 
 const EditPatientButton = ({ onClick }) => {
   return (
