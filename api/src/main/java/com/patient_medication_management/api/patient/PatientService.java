@@ -31,28 +31,35 @@ public class PatientService {
 
     // Create a new Patient
     public PatientDTO createPatient(PatientDTO patientDTO) {
-        // Create and save the Address
-        Address address = new Address();
-        address.setStreet1((patientDTO.getStreet1()));
-        address.setStreet2(patientDTO.getStreet1());
-        address.setCity(patientDTO.getCity());
-        address.setState(patientDTO.getState());
-        address.setZipCode(patientDTO.getZipCode());
-
-        Address savedAddress = addressRepository.save(address);
+        // Get or create address
+        Address address = addressRepository.findByStreet1AndStreet2AndCityAndStateAndZipCode(
+                patientDTO.getStreet1(),
+                patientDTO.getStreet2(),
+                patientDTO.getCity(),
+                patientDTO.getState(),
+                patientDTO.getZipCode()
+        ).orElseGet(() -> {
+            Address newAddress = new Address();
+            newAddress.setStreet1(patientDTO.getStreet1());
+            newAddress.setStreet2(patientDTO.getStreet2());
+            newAddress.setCity(patientDTO.getCity());
+            newAddress.setState(patientDTO.getState());
+            newAddress.setZipCode(patientDTO.getZipCode());
+            return addressRepository.save(newAddress);
+        });
 
         // Map DTO to Entity and set Address
         Patient patient = patientMapper.mapToEntity(patientDTO);
-        patient.setAddress(savedAddress);
+        patient.setAddress(address);
 
         // Generate a unique UUID for the Patient ID
 
         String uniqueId;
         do {
             uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        } while (patientRepository.existsById(uniqueId)); // Check if it already exists
+        } while (patientRepository.existsByPatientId(uniqueId)); // Check if it already exists
 
-        patient.setId(uniqueId);
+        patient.setPatientId(uniqueId);
 
         // Save the Patient entity
         Patient savedPatient = patientRepository.save(patient);
@@ -64,6 +71,11 @@ public class PatientService {
     public Page<PatientDTO> getPatients(String filterName, String filterValue, Pageable pageable) {
         Page<Patient> patients;
 
+    // Handle null or empty filter cases
+    if (filterName == null || filterValue == null || filterName.trim().isEmpty() || filterValue.trim().isEmpty()) {
+            patients = patientRepository.findAll(pageable);
+            return patients.map(patientMapper::mapToDTO);
+        }
         switch (filterName) {
             case "id":
                 patients = patientRepository.findByIdContainingIgnoreCase(filterValue, pageable);
@@ -103,11 +115,25 @@ public class PatientService {
     }
 
     public PatientDTO updatePatient(PatientDTO patientDTO) {
-        if (!patientRepository.existsById(patientDTO.getId())) {
-            throw new IllegalArgumentException("Patient not found with ID: " + patientDTO.getId());
-        }
-        Patient existingPatient = patientRepository.findById(patientDTO.getId()).get();
 
+        Patient existingPatient = patientRepository.findById(patientDTO.getId()).orElseThrow(() ->
+                new IllegalArgumentException("Patient not found with ID: " + patientDTO.getId()));
+
+        Address address = addressRepository.findByStreet1AndStreet2AndCityAndStateAndZipCode(
+                patientDTO.getStreet1(),
+                patientDTO.getStreet2(),
+                patientDTO.getCity(),
+                patientDTO.getState(),
+                patientDTO.getZipCode()
+        ).orElseGet(() -> {
+            Address newAddress = new Address();
+            newAddress.setStreet1(patientDTO.getStreet1());
+            newAddress.setStreet2(patientDTO.getStreet2());
+            newAddress.setCity(patientDTO.getCity());
+            newAddress.setState(patientDTO.getState());
+            newAddress.setZipCode(patientDTO.getZipCode());
+            return addressRepository.save(newAddress);
+        });
         // Update fields of the existing Patient entity
         existingPatient.setFirstName(patientDTO.getFirstName());
         existingPatient.setLastName(patientDTO.getLastName());
@@ -116,17 +142,10 @@ public class PatientService {
         existingPatient.setEmail(patientDTO.getEmail());
         existingPatient.setPhone(patientDTO.getPhone());
 
-        existingPatient.getAddress().setStreet1(patientDTO.getStreet1());
-        existingPatient.getAddress().setStreet2(patientDTO.getStreet2());
-        existingPatient.getAddress().setCity(patientDTO.getCity());
-        existingPatient.getAddress().setState(patientDTO.getState());
-        existingPatient.getAddress().setZipCode(patientDTO.getZipCode());
+        existingPatient.setAddress(address);
 
-        // Save the updated Patient entity to the repository
-        Patient updatedPatient = patientRepository.save(existingPatient);
-
-        // Map the updated Patient entity back to PatientDTO and return it
-        return patientMapper.mapToDTO(updatedPatient);
+        // Save the updated Patient and return the mapped DTO
+        return patientMapper.mapToDTO(patientRepository.save(existingPatient));
 
     }
 }
