@@ -64,6 +64,8 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
     boolean existsByPatientId(String patientId);
 
+    void deleteByPatientId(String patientId);
+
     // address i a separate table that is linked to the patient table
 
 

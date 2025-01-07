@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MedicationService {
@@ -17,14 +16,6 @@ public class MedicationService {
     public MedicationService(MedicationRepository medicationRepository, MedicationMapper medicationMapper) {
         this.medicationRepository = medicationRepository;
         this.medicationMapper = medicationMapper;
-    }
-
-    public MedicationDTO getMedicationByName(String medicationName) {
-        Optional<Medication> medicationOptional = medicationRepository.findByMedicationName(medicationName);
-        if (medicationOptional.isEmpty()) {
-            throw new IllegalArgumentException("Medication with name " + medicationName + " not found.");
-        }
-        return medicationMapper.mapToDTO(medicationOptional.get());
     }
 
     public List<MedicationDTO> getMedications() {

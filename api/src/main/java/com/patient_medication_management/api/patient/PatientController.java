@@ -4,14 +4,10 @@ import com.patient_medication_management.api.dto.responses.PatientDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
 
 
 @RestController
@@ -46,5 +42,11 @@ public class PatientController {
     public ResponseEntity<PatientDTO> updatePatient(@RequestBody @Valid PatientDTO patientDTO) {
         PatientDTO patient = patientService.updatePatient(patientDTO);
         return ResponseEntity.ok(patient);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable String id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.noContent().build();
     }
 }
