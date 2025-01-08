@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../../styles/patients-page.scss";
+// import "../../styles/patients-page.scss";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";

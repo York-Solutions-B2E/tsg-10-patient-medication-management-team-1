@@ -1,5 +1,5 @@
 import { Tooltip, IconButton } from "@mui/material";
-import { Delete } from "@material-ui/icons";
+import { Delete } from "@mui/icons-material";
 
 const DeletePatientButton = ({ onClick }) => {
   return (
