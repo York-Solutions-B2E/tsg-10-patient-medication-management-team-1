@@ -8,6 +8,7 @@ import DetailsButton from "./DetailsButton.jsx";
 import ConfirmModal from "./ConfirmModal.jsx";
 import DetailsModal from "./DetailsModal.jsx";
 import useDisclosure from "../../hooks/useDisclosure.js";
+import { patientId } from "../../utils/validations.js";
 
 const PrescriptionsPage = () => {
   const [searchParams] = useSearchParams();
@@ -27,31 +28,32 @@ const PrescriptionsPage = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "prescriptionId", headerName: "Prescription ID", width: 150 },
-    { field: "patientName", headerName: "Patient", width: 150 },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "prescriptionId", headerName: "Prescription ID", width: 120 },
+    { field: "patientName", headerName: "Patient", width: 120 },
     { field: "patientId", headerName: "Patient ID", width: 90 },
     {
       field: "medicationName",
       headerName: "Medication",
-      width: 150,
+      width: 120,
     },
-    { field: "medicationCode", headerName: "Medication Code", width: 150 },
-    { field: "createdAt", headerName: "Date Issued", width: 180 },
-    { field: "updateAt", headerName: "Last Updated", width: 180 },
-    { field: "doctorName", headerName: "Issuing Doctor", width: 180 },
-    { field: "pharmacyName", headerName: "Pharmacy", width: 180 },
-    { field: "dosage", headerName: "Dosage", width: 150 },
+    { field: "medicationCode", headerName: "Rx Code", width: 100 },
+    { field: "createdAt", headerName: "Date Issued", width: 150 },
+    { field: "updateAt", headerName: "Last Updated", width: 150 },
+    { field: "doctorName", headerName: "Issuing Doctor", width: 130 },
+    { field: "pharmacyName", headerName: "Pharmacy", width: 130 },
+    { field: "dosage", headerName: "Dosage", width: 70 },
     { field: "quantity", headerName: "Quantity", width: 90 },
-    { field: "status", headerName: "Status", width: 150 },
+    { field: "status", headerName: "Status", width: 130 },
     {
       field: "details",
       headerName: "",
-      width: 130,
+      width: 30,
       renderCell: (params) => {
         return (
           <DetailsButton
             onClick={() => {
+              console.log(params.row.id);
               setSelectedPrescriptionId(params.row.id);
               detailsModalDisc.onOpen;
             }}
@@ -62,7 +64,7 @@ const PrescriptionsPage = () => {
     {
       field: "actions",
       headerName: "",
-      width: 150,
+      width: 30,
       renderCell: (params) => {
         return (
           <CancelButton
@@ -115,6 +117,7 @@ const PrescriptionsPage = () => {
   };
 
   useEffect(() => {
+    console.log(prescriptions);
     const fetchPatients = async () => {
       const pageToLoad = page === 0 ? 0 : page - 1;
       const { content, number, last } = await handleGetPrescriptions(
@@ -164,8 +167,10 @@ const PrescriptionsPage = () => {
       />
       <DetailsModal
         details={
-          prescriptions.find((p) => p.id === selectedPrescriptionId)
-            .instructions
+          selectedPrescriptionId !== null
+            ? prescriptions.find((p) => p.id === selectedPrescriptionId)
+                .instructions
+            : ""
         }
         disclosure={detailsModalDisc}
       />

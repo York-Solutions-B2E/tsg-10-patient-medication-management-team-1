@@ -250,7 +250,7 @@ class ManagementApi {
    * @returns {Promise<DoctorUserData>} {DoctorUserData}
    */
   static async authenticateDoctorUser() {
-    return this.request("/auth", "post");
+    return this.request("/user", "post");
   }
 
   /**
@@ -259,7 +259,7 @@ class ManagementApi {
    * Returns the logout url and idToken for okta logout.
    */
   static async logout() {
-    const response = await this.request("/auth/logout", "post");
+    const response = await this.request("/logout", "post");
     this.token = null;
     return response;
   }

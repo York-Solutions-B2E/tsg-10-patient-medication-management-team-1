@@ -20,7 +20,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
       {/* Home Link */}
       <div className="nav-left">
         <Button
-          onClick={() => navigate("/patients")}
+          action={() => navigate("/patients")}
           type="nav-item home"
           text="Home"
           icon={<LocalHospitalSharp />}
@@ -36,7 +36,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
       {isLoggedIn && (
         <div className="nav-right">
           <Button
-            onClick={() => navigate("/patients")}
+            action={() => navigate("/patients")}
             selected={pathname.includes("/patients")}
             type="nav-tab"
             text="Patients"
@@ -45,7 +45,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
           />
 
           <Button
-            onClick={() => navigate("/prescriptions")}
+            action={() => navigate("/prescriptions")}
             selected={
               pathname.includes("/prescriptions") &&
               !pathname.includes("/create")
@@ -56,7 +56,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
             icon={<MedicationSharp />}
           />
           <Button
-            onClick={() => navigate("/prescriptions/create")}
+            action={() => navigate("/prescriptions/create")}
             selected={pathname.includes("/prescriptions/create")}
             type="nav-tab"
             text="New Prescription"
@@ -65,7 +65,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
           />
           <Button
             loading={isLoading}
-            onClick={logout}
+            action={logout}
             type="nav-tab"
             text="Logout"
             tooltipText="Logout"

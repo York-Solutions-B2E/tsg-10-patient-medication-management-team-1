@@ -98,13 +98,13 @@ const PatientsPage = () => {
   ];
 
   const handleSearch = (name, value) => {
+    navigate(`/patients?filterName=${name}&filterValue=${value}`, {
+      replace: true,
+    });
     setPatients([]);
     setTotalLoadedPages(0);
     setLastPage(false);
     setPage(0);
-    navigate(`/patients?filter=${name}&filterValue=${value}`, {
-      replace: true,
-    });
   };
 
   // Form fields for create and edit modals
@@ -234,6 +234,7 @@ const PatientsPage = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       const pageToLoad = page === 0 ? 0 : page - 1;
+      console.log(searchParams.get("filterName"));
       const { content, number, last } = await handleGetPatients(
         pageToLoad,
         limit,
