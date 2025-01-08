@@ -6,6 +6,9 @@ import com.patient_medication_management.api.dto.responses.PrescriptionDTO;
 import com.patient_medication_management.api.enums.PrescriptionStatus;
 import com.patient_medication_management.api.exception.InvalidPrescriptionStatusException;
 import com.patient_medication_management.api.exception.ResourceNotFoundException;
+import com.patient_medication_management.api.kafka.CancelPrescriptionEvent;
+import com.patient_medication_management.api.kafka.PrescriptionEventPublisher;
+import com.patient_medication_management.api.kafka.PrescriptionStatusEvent;
 import com.patient_medication_management.api.mappers.PrescriptionMapper;
 import com.patient_medication_management.api.medication.Medication;
 import com.patient_medication_management.api.medication.MedicationRepository;
@@ -36,16 +39,20 @@ public class PrescriptionService {
     private final PharmacyRepository pharmacyRepository;
     private final PrescriptionMapper prescriptionMapper;
 
+    private final PrescriptionEventPublisher prescriptionEventPublisher;
+
     @Autowired
     public PrescriptionService(PrescriptionRepository prescriptionRepository, PatientRepository patientRepository,
                                MedicationRepository medicationRepository, DoctorRepository doctorRepository,
-                               PharmacyRepository pharmacyRepository, PrescriptionMapper prescriptionMapper) {
+                               PharmacyRepository pharmacyRepository, PrescriptionMapper prescriptionMapper,
+                               PrescriptionEventPublisher prescriptionEventPublisher) {
         this.prescriptionRepository = prescriptionRepository;
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.doctorRepository = doctorRepository;
         this.pharmacyRepository = pharmacyRepository;
         this.prescriptionMapper = prescriptionMapper;
+        this.prescriptionEventPublisher = prescriptionEventPublisher;
     }
 
     // Fetch filterable list of all prescriptions
@@ -109,6 +116,8 @@ public class PrescriptionService {
 
         Prescription prescription = buildPrescription(dto, entities);
         Prescription savedPrescription = prescriptionRepository.save(prescription);
+
+        prescriptionEventPublisher.publishNewPrescription(prescriptionMapper.toNePrescriptionEvent(savedPrescription));
 
         return prescriptionMapper.toDTO(savedPrescription);
     }
@@ -229,9 +238,20 @@ public class PrescriptionService {
 
         prescription.setStatus(PrescriptionStatus.CANCELLED);
         Prescription updatedPrescription = prescriptionRepository.save(prescription);
+        prescriptionEventPublisher.publishCancelPrescription(prescriptionMapper.toCancelPrescriptionEvent(updatedPrescription));
 
         return prescriptionMapper.toDTO(updatedPrescription);
 
+    }
+
+    public void updatePrescriptionStatus(PrescriptionStatusEvent event) {
+        Prescription prescription = prescriptionRepository.findByPrescriptionId(event.getPrescriptionId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Prescription not found with ID: %s", event.getPrescriptionId()))
+                );
+
+        prescription.setStatus(event.getStatus());
+        prescriptionRepository.save(prescription);
     }
 
 }

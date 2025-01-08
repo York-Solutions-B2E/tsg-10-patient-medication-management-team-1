@@ -1,6 +1,8 @@
 package com.patient_medication_management.api.mappers;
 
 import com.patient_medication_management.api.dto.responses.PrescriptionDTO;
+import com.patient_medication_management.api.kafka.CancelPrescriptionEvent;
+import com.patient_medication_management.api.kafka.NewPrescriptionEvent;
 import com.patient_medication_management.api.prescription.Prescription;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -39,4 +41,9 @@ public interface PrescriptionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     public abstract Prescription toEntity(PrescriptionDTO dto);
+
+
+    public abstract NewPrescriptionEvent toNePrescriptionEvent(Prescription prescription);
+
+    public abstract CancelPrescriptionEvent toCancelPrescriptionEvent(Prescription prescription);
 }
