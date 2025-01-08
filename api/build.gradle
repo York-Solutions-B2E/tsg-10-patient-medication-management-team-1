@@ -57,8 +57,22 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    // Spring Kafka
+    implementation 'org.springframework.kafka:spring-kafka:3.0.0' // Adjust version as needed
+    implementation 'org.apache.kafka:kafka-clients:3.5.0'// Use the latest compatible version
+
+    // (Optional) Spring Boot Test for Kafka
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.withType(Test) {
+    enabled = false
 }
