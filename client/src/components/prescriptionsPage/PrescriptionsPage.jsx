@@ -145,9 +145,12 @@ const PrescriptionsPage = () => {
   ]);
 
   return (
-    <div data-testid="grid-container" className="patients-page">
+    <div data-testid="grid-container" className="prescriptions-page">
+      {/* Wrapper div for Prescription List title */}
+      <div className="header-box">Prescription List</div>
+      
+      {/* DataGrid Component */}
       <DataGridComponent
-        title="Prescription List"
         isLoading={isLoading}
         rows={prescriptions}
         columns={columns}

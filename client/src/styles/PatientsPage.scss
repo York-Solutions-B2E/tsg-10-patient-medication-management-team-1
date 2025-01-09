@@ -8,6 +8,14 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  .MuiDataGrid-root {
+    background-color: #e3f2fd; /* Light blue */
+  }
+}
+
+
+
+
 
   .box {
     background-color: white;
@@ -19,6 +27,7 @@
     text-align: center;
     margin-bottom: 20px; /* Adds spacing between box and button */
   }
+
 
   .submit-button {
     background-color: #ffd755;
@@ -41,4 +50,3 @@
       transform: translateY(2px);
     }
   }
-}

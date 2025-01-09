@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import "../../styles/patients-page.scss";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";
@@ -41,18 +40,40 @@ const PatientsPage = () => {
   // DataGrid columns
 
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    { field: "lastName", headerName: "Last Name", width: 150 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 90,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      width: 150,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
+    },
     {
       field: "firstName",
       headerName: "First Name",
       width: 150,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
     },
-    { field: "dob", headerName: "Date of Birth", width: 180 },
+    {
+      field: "dob",
+      headerName: "Date of Birth",
+      width: 180,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
+    },
     {
       field: "prescriptionCount",
       headerName: "Prescriptions",
       width: 150,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
       renderCell: (params) => (
         <NewPatientPrescriptionButton
           onClick={() => {
@@ -66,6 +87,8 @@ const PatientsPage = () => {
       field: "actions",
       headerName: "",
       width: 150,
+      headerClassName: "super-app-theme--header",
+      headerAlign: "center",
       renderCell: (params) => (
         <>
           <EditPatientButton
@@ -74,7 +97,6 @@ const PatientsPage = () => {
               editModalDisc.onOpen();
             }}
           />
-
           <DeletePatientButton
             onClick={() => {
               setSelectedPatientId(params.row.id);
@@ -259,10 +281,12 @@ const PatientsPage = () => {
     totalLoadedPages,
   ]);
 
+  
+
   return (
     <div data-testid="grid-container" className="patients-page">
+      <div className="header-box">Patient List</div>
       <DataGridComponent
-        title="Patient List"
         isLoading={isLoading}
         rows={patients}
         columns={columns}
