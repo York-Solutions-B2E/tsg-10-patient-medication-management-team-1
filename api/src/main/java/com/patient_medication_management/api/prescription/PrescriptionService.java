@@ -6,6 +6,8 @@ import com.patient_medication_management.api.dto.responses.PrescriptionDTO;
 import com.patient_medication_management.api.enums.PrescriptionStatus;
 import com.patient_medication_management.api.exception.InvalidPrescriptionStatusException;
 import com.patient_medication_management.api.exception.ResourceNotFoundException;
+import com.patient_medication_management.api.kafka.PrescriptionEventPublisher;
+import com.patient_medication_management.api.kafka.PrescriptionStatusEvent;
 import com.patient_medication_management.api.mappers.PrescriptionMapper;
 import com.patient_medication_management.api.medication.Medication;
 import com.patient_medication_management.api.medication.MedicationRepository;
@@ -16,6 +18,8 @@ import com.patient_medication_management.api.pharmacy.PharmacyRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ import java.util.*;
 @Transactional
 public class PrescriptionService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PrescriptionService.class);
+
     private final PrescriptionRepository prescriptionRepository;
 
     private final PatientRepository patientRepository;
@@ -36,16 +42,20 @@ public class PrescriptionService {
     private final PharmacyRepository pharmacyRepository;
     private final PrescriptionMapper prescriptionMapper;
 
+    private final PrescriptionEventPublisher prescriptionEventPublisher;
+
     @Autowired
     public PrescriptionService(PrescriptionRepository prescriptionRepository, PatientRepository patientRepository,
                                MedicationRepository medicationRepository, DoctorRepository doctorRepository,
-                               PharmacyRepository pharmacyRepository, PrescriptionMapper prescriptionMapper) {
+                               PharmacyRepository pharmacyRepository, PrescriptionMapper prescriptionMapper,
+                               PrescriptionEventPublisher prescriptionEventPublisher) {
         this.prescriptionRepository = prescriptionRepository;
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.doctorRepository = doctorRepository;
         this.pharmacyRepository = pharmacyRepository;
         this.prescriptionMapper = prescriptionMapper;
+        this.prescriptionEventPublisher = prescriptionEventPublisher;
     }
 
     // Fetch filterable list of all prescriptions
@@ -75,7 +85,7 @@ public class PrescriptionService {
             case "instructions" -> prescriptionRepository
                     .findByInstructionsContainingIgnoreCase(filterValue, pageable);
 
-            case "status" -> handleStatusFilter(filterValue, pageable);  // Use the handler here
+            case "status" -> handleStatusFilter(filterValue, pageable);
 
             case "all" -> prescriptionRepository
                     .findAllContaining(filterValue, pageable);
@@ -84,19 +94,6 @@ public class PrescriptionService {
         };
 
         return prescriptions.map(prescriptionMapper::toDTO);
-    }
-
-    private Page<Prescription> handleStatusFilter(String statusValue, Pageable pageable) {
-        try {
-            PrescriptionStatus status = PrescriptionStatus.valueOf(statusValue.toUpperCase());
-            return prescriptionRepository.findByStatus(status, pageable);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidPrescriptionStatusException(
-                    String.format("Invalid prescription status: '%s'. Valid status values are: %s",
-                            statusValue,
-                            Arrays.toString(PrescriptionStatus.values()))
-            );
-        }
     }
 
     // Create prescription
@@ -108,9 +105,85 @@ public class PrescriptionService {
         var entities = findRequiredEntities(dto);
 
         Prescription prescription = buildPrescription(dto, entities);
+        logger.info("Building new Prescription object with data: {}", dto);
         Prescription savedPrescription = prescriptionRepository.save(prescription);
+        // Log the successful saving of the prescription
+        logger.info("New Prescription with ID '{}' successfully saved in the database for Patient ID '{}', Status '{}'",
+                savedPrescription.getPrescriptionId(),
+                savedPrescription.getPatient().getPatientId(),
+                savedPrescription.getStatus());
 
+        logger.info("Initiating event publishing for Prescription ID '{}'", savedPrescription.getPrescriptionId());
+
+        try {
+            logger.info("Publishing new Prescription event for ID '{}'", savedPrescription.getPrescriptionId());
+            prescriptionEventPublisher.publishNewPrescription(prescriptionMapper.toNewPrescriptionEvent(savedPrescription));
+            logger.info("Successfully published Prescription event for ID '{}'", savedPrescription.getPrescriptionId());
+        } catch (Exception e) {
+            logger.error("Failed to publish Prescription event for ID '{}': {}",
+                    savedPrescription.getPrescriptionId(),
+                    e.getMessage(),
+                    e);
+        }
         return prescriptionMapper.toDTO(savedPrescription);
+    }
+
+    // Cancel prescription
+    public PrescriptionDTO cancelPrescription(Long id) {
+        logger.info("Initiating cancellation process for Prescription ID '{}'", id);
+        // Fetch and validate prescription
+        Prescription prescription = prescriptionRepository.findById(id)
+                .orElseThrow(() -> {
+                    String message = String.format("Prescription not found with ID: %s", id);
+                    logger.error(message);
+                    return new ResourceNotFoundException(message);
+                });
+        logger.info("Prescription fetched successfully for ID '{}'. Current Status: '{}'",
+                prescription.getPrescriptionId(),
+                prescription.getStatus());
+
+        if (prescription.getStatus() == PrescriptionStatus.CANCELLED) {
+            String message = "Prescription is already cancelled. No action required.";
+            logger.warn("Cancellation attempt for ID '{}' failed: {}", id, message);
+            throw new IllegalStateException(message);
+        }
+
+        if (prescription.getStatus() == PrescriptionStatus.PICKED_UP) {
+            String message = "Cannot cancel Prescription ID '{}' because it has already been picked up.";
+            logger.warn("Cancellation attempt failed: {}", message);
+            throw new IllegalStateException(message);
+        }
+        logger.info("Updating Prescription ID '{}' to status '{}'",
+                prescription.getPrescriptionId(),
+                PrescriptionStatus.CANCELLED);
+
+        prescription.setStatus(PrescriptionStatus.CANCELLED);
+        Prescription updatedPrescription = prescriptionRepository.save(prescription);
+
+        logger.info("Prescription ID '{}' successfully updated in the database with status '{}'",
+                updatedPrescription.getPrescriptionId(),
+                updatedPrescription.getStatus());
+
+        logger.info("Publishing cancellation event for Prescription ID '{}'",
+                updatedPrescription.getPrescriptionId());
+
+        prescriptionEventPublisher.publishCancelPrescription(prescriptionMapper.toCancelPrescriptionEvent(updatedPrescription));
+
+        logger.info("Successfully published cancellation event for Prescription ID '{}'",
+                updatedPrescription.getPrescriptionId());
+        return prescriptionMapper.toDTO(updatedPrescription);
+    }
+
+    // Update prescription from External Service
+    public void updatePrescriptionStatus(PrescriptionStatusEvent event) {
+        Prescription prescription = prescriptionRepository.findByPrescriptionId(event.getPrescriptionId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Prescription not found with ID: %s", event.getPrescriptionId()))
+                );
+        prescription.setStatus(event.getStatus());
+        logger.info("RECEIVED the Event to update the prescription status");
+        prescriptionRepository.save(prescription);
+        logger.info("Prescription CANCELLED SUCCESSFULLY!");
     }
 
     private void validatePrescriptionDTO(PrescriptionDTO dto) {
@@ -209,29 +282,17 @@ public class PrescriptionService {
         return result.toString();
     }
 
-    // Cancel prescription
-    public PrescriptionDTO cancelPrescription(Long id) {
-        // Fetch and validate prescription
-        Prescription prescription = prescriptionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Prescription not found with ID: %s", id))
-                );
-        if (prescription.getStatus() == PrescriptionStatus.CANCELLED) {
-            String message = "Patient has already been cancelled!";
-            throw new IllegalStateException(message);
+    private Page<Prescription> handleStatusFilter(String statusValue, Pageable pageable) {
+        try {
+            PrescriptionStatus status = PrescriptionStatus.valueOf(statusValue.toUpperCase());
+            return prescriptionRepository.findByStatus(status, pageable);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidPrescriptionStatusException(
+                    String.format("Invalid prescription status: '%s'. Valid status values are: %s",
+                            statusValue,
+                            Arrays.toString(PrescriptionStatus.values()))
+            );
         }
-
-        if (prescription.getStatus() == PrescriptionStatus.PICKED_UP) {
-            String message = "Patient has already been picked up the prescription!";
-            throw new IllegalStateException(message);
-        }
-
-
-        prescription.setStatus(PrescriptionStatus.CANCELLED);
-        Prescription updatedPrescription = prescriptionRepository.save(prescription);
-
-        return prescriptionMapper.toDTO(updatedPrescription);
-
     }
 
 }

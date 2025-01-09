@@ -27,6 +27,10 @@ const PatientsPage = () => {
   const editModalDisc = useDisclosure();
   const deleteConfirmDisc = useDisclosure();
 
+  const filterName = searchParams.get("filterName");
+  const filterValue = searchParams.get("filterValue");
+  console.log(filterName, filterValue);
+
   const {
     handleGetPatients,
     handleCreatePatient,
@@ -77,7 +81,7 @@ const PatientsPage = () => {
       renderCell: (params) => (
         <NewPatientPrescriptionButton
           onClick={() => {
-            navigate(`/prescriptions/create?patientId=${params.row.id}`);
+            navigate(`/prescriptions/create?patientId=${params.row.patientId}`);
           }}
           prescriptionCount={params.row.prescriptionCount}
         />
@@ -150,8 +154,9 @@ const PatientsPage = () => {
       name: "dob",
       type: "date",
       label: "Date of Birth",
+      disableFuture: true,
       required: true,
-      defaultValue: patient ? patient.dob : "",
+      defaultValue: patient ? patient.dob : null,
     },
     {
       name: "gender",
@@ -182,17 +187,17 @@ const PatientsPage = () => {
     },
     { type: "divider", label: "Address" },
     {
-      name: "streetOne",
+      name: "street1",
       type: "text",
       label: "Street 1",
       required: true,
-      defaultValue: patient ? patient.streetOne : "",
+      defaultValue: patient ? patient.street1 : "",
     },
     {
-      name: "streetTwo",
+      name: "street2",
       type: "text",
       label: "Street 2",
-      defaultValue: patient ? patient.streetTwo : "",
+      defaultValue: patient ? patient.street2 : "",
     },
     {
       name: "city",
