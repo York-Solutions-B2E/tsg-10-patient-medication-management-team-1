@@ -38,7 +38,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatients(filterName, filterValue, pageable));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<PatientDTO> updatePatient(@RequestBody @Valid PatientDTO patientDTO) {
         PatientDTO patient = patientService.updatePatient(patientDTO);
         return ResponseEntity.ok(patient);

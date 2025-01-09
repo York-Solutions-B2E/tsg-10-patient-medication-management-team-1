@@ -127,8 +127,8 @@ class ManagementApi {
    * }} patientData
    * @returns {Promise<PatientData>} {PatientData}
    */
-  static async updatePatient(patientData) {
-    return this.request(`/patients`, "put", patientData);
+  static async updatePatient(patientId, patientData) {
+    return this.request(`/patients/${patientId}`, "put", patientData);
   }
 
   /**

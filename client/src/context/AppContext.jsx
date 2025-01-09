@@ -105,10 +105,10 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const handleUpdatePatient = async (patientData) => {
+  const handleUpdatePatient = async (patientId, patientData) => {
     setIsLoading(true);
     try {
-      return await ManagementApi.updatePatient(patientData);
+      return await ManagementApi.updatePatient(patientId, patientData);
     } catch (error) {
       setError(error);
     } finally {

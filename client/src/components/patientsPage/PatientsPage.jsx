@@ -194,7 +194,7 @@ const PatientsPage = () => {
       defaultValue: patient ? patient.state : "",
     },
     {
-      name: "zip",
+      name: "zipCode",
       type: "text",
       label: "Zip",
       required: true,
@@ -216,13 +216,14 @@ const PatientsPage = () => {
 
   const onCreateSubmit = async (values) => {
     const newPatient = await handleCreatePatient(values);
+    console.log(newPatient);
     createModalDisc.onClose();
     resetPage();
     navigate(`/patients?filterName=id&filterValue=${newPatient.id}`);
   };
 
   const onUpdateSubmit = async (values) => {
-    const updatedPatient = await handleUpdatePatient(values);
+    const updatedPatient = await handleUpdatePatient(selectedPatientId, values);
     setPatients(
       patients.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
     );

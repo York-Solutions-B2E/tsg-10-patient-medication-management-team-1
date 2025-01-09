@@ -8,6 +8,7 @@ import {
   Radio,
   FormControlLabel,
   Autocomplete,
+  Divider,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -38,7 +39,9 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
    * Initial values for the form fields.
    */
   const initialValues = fields.reduce((acc, field) => {
-    acc[field.name] = field.defaultValue || "";
+    if (field.type !== "divider") {
+      acc[field.name] = field.defaultValue || "";
+    }
     return acc;
   }, {});
 
@@ -212,6 +215,13 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                 error={errors[field.name] ? true : false}
                 helperText={errors[field.name]}
               />
+            );
+          case "divider":
+            return (
+              <div key={field.label} className="form-divider">
+                <span>{field.label}</span>
+                <Divider key={field.label} />
+              </div>
             );
           default:
             return null;
