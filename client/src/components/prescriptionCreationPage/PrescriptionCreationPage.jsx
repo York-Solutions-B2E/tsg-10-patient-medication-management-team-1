@@ -8,6 +8,7 @@ const PrescriptionCreationPage = () => {
   const [searchParams] = useSearchParams();
   const [pharmacies, setPharmacies] = useState([]);
   const [medications, setMedications] = useState([]);
+  const [fetched, setFetched] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,7 +21,11 @@ const PrescriptionCreationPage = () => {
   } = useAppContext();
 
   const formFields = [
-    { name: "doctorId", hidden: true, defaultValue: doctorUser.id },
+    {
+      name: "doctorId",
+      hidden: true,
+      defaultValue: doctorUser ? doctorUser.id : "",
+    },
     {
       name: "patientId",
       label: "Patient ID",
@@ -33,17 +38,23 @@ const PrescriptionCreationPage = () => {
       name: "pharmacyId",
       label: "Pharmacy",
       type: "select",
-      options: pharmacies.map((p) => {
-        return { value: p.id, label: `${p.name} ${p.id}` };
-      }),
+      options:
+        pharmacies.length > 0
+          ? pharmacies.map((p) => {
+              return { value: p.id, label: `${p.name} ${p.id}` };
+            })
+          : [],
       required: true,
     },
     {
-      name: "medicationCode",
+      name: "medicationId",
       label: "Medication",
       type: "select",
       options: medications.map((m) => {
-        return { value: m.id, label: `${m.id} ${m.name}` };
+        return {
+          value: m.id,
+          label: `${m.medicationCode} ${m.medicationName}`,
+        };
       }),
       autocomplete: true,
       required: true,
@@ -68,18 +79,28 @@ const PrescriptionCreationPage = () => {
   };
 
   useEffect(() => {
+    console.log(pharmacies);
     const fetchData = async () => {
-      const { pharmacies, medications } = await Promise.all([
-        handleGetPharmacies(),
-        handleGetMedications(),
-      ]);
-      setPharmacies(pharmacies);
-      setMedications(medications);
+      console.log("fetching data");
+      const pharmaciesData = await handleGetPharmacies();
+      const medicationsData = await handleGetMedications();
+      console.log(pharmaciesData);
+      console.log(medicationsData);
+      // const response = await Promise.all([
+      //   handleGetPharmacies(),
+      //   handleGetMedications(),
+      // ]);
+      // console.log(response);
+
+      setPharmacies(pharmaciesData);
+      setMedications(medicationsData);
+      setFetched(true);
     };
-    if (pharmacies.length === 0 && medications.length === 0) {
+    // if (pharmacies.length === 0 && medications.length === 0) {
+    if (!fetched) {
       fetchData();
     }
-  }, [pharmacies, medications, handleGetPharmacies, handleGetMedications]);
+  }, []);
 
   return (
     <div>

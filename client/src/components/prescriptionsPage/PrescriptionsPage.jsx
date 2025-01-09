@@ -8,7 +8,6 @@ import DetailsButton from "./DetailsButton.jsx";
 import ConfirmModal from "./ConfirmModal.jsx";
 import DetailsModal from "./DetailsModal.jsx";
 import useDisclosure from "../../hooks/useDisclosure.js";
-import { patientId } from "../../utils/validations.js";
 
 const PrescriptionsPage = () => {
   const [searchParams] = useSearchParams();
@@ -94,11 +93,11 @@ const PrescriptionsPage = () => {
   ];
 
   const handleSearch = (name, value) => {
-    setPrescriptions([]);
-    setTotalLoadedPages(0);
-    setLastPage(false);
-    setPage(0);
-    navigate(`/prescriptions?filter=${name}&filterValue=${value}`, {
+    // setPrescriptions([]);
+    // setTotalLoadedPages(0);
+    // setLastPage(false);
+    // setPage(0);
+    navigate(`/prescriptions?filterName=${name}&filterValue=${value}`, {
       replace: true,
     });
   };
@@ -118,6 +117,7 @@ const PrescriptionsPage = () => {
 
   useEffect(() => {
     console.log(prescriptions);
+    console.log();
     const fetchPatients = async () => {
       const pageToLoad = page === 0 ? 0 : page - 1;
       const { content, number, last } = await handleGetPrescriptions(
