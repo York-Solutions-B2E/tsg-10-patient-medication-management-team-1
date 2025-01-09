@@ -58,7 +58,7 @@ const DataGridComponent = ({
   return (
     <div>
       {title && (
-        <div>
+        <div className="data-grid-title">
           <h1>{title}</h1>
         </div>
       )}

@@ -172,14 +172,21 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                   name={field.name}
                   label={field.label}
                   value={dayjs(values[field.name])}
-                  onChange={handleChange}
+                  onChange={(d) =>
+                    handleChange({
+                      target: {
+                        name: field.name,
+                        value: dayjs(d).format("YYYY-MM-DD"),
+                      },
+                    })
+                  }
                   views={field.views || ["year", "month", "day"]}
-                  openTo={field.openTo || "day"}
+                  openTo={field.openTo || "year"}
                   onBlur={handleBlur}
                   disableFuture={field.disableFuture || false}
                   disablePast={field.disablePast || false}
                   disableOpenPicker={field.disableOpenPicker || false}
-                  format={field.format || "dd/MM/yyyy"}
+                  format={field.format || "YYYY-MM-DD"}
                   error={errors[field.name] ? true : false}
                   helperText={errors[field.name]}
                   loading={isLoading || false}
