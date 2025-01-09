@@ -28,6 +28,10 @@ const PatientsPage = () => {
   const editModalDisc = useDisclosure();
   const deleteConfirmDisc = useDisclosure();
 
+  const filterName = searchParams.get("filterName");
+  const filterValue = searchParams.get("filterValue");
+  console.log(filterName, filterValue);
+
   const {
     handleGetPatients,
     handleCreatePatient,
@@ -56,7 +60,7 @@ const PatientsPage = () => {
       renderCell: (params) => (
         <NewPatientPrescriptionButton
           onClick={() => {
-            navigate(`/prescriptions/create?patientId=${params.row.id}`);
+            navigate(`/prescriptions/create?patientId=${params.row.patientId}`);
           }}
           prescriptionCount={params.row.prescriptionCount}
         />
@@ -129,7 +133,7 @@ const PatientsPage = () => {
       type: "date",
       label: "Date of Birth",
       required: true,
-      defaultValue: patient ? patient.dob : "",
+      defaultValue: patient ? patient.dob : null,
     },
     {
       name: "gender",

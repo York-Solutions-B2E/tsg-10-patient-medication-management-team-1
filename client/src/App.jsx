@@ -1,11 +1,13 @@
 import Router from "./routes/Router";
 import Navbar from "./components/common/Navbar";
 import "./App.css";
+import { useCookies } from "react-cookie";
 
 import { useAppContext } from "./context/AppContext";
 
 function App() {
   const { doctorUser, handleLogout, isLoading } = useAppContext();
+  const [cookies] = useCookies(["XSRF-TOKEN"]);
   return (
     <>
       <Navbar
@@ -14,7 +16,7 @@ function App() {
         isLoading={isLoading}
         userInfo={doctorUser}
       />
-      <Router isLoggedIn={doctorUser ? true : false} />
+      <Router isLoggedIn={cookies["XSRF-TOKEN"] ? true : false} />
     </>
   );
 }

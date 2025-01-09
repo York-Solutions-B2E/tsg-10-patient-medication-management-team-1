@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import Button from "./Button";
 
 const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
@@ -170,7 +171,7 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                   key={field.name}
                   name={field.name}
                   label={field.label}
-                  value={values[field.name]}
+                  value={dayjs(values[field.name])}
                   onChange={handleChange}
                   views={field.views || ["year", "month", "day"]}
                   openTo={field.openTo || "day"}
@@ -213,13 +214,14 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
         <Button
           type="submit"
           action={() => {
+            console.log("submitting");
             if (validateForm() || isValid) {
               onSubmit(values);
             }
           }}
           loading={isLoading}
           text="Submit"
-          disabled={!isValid}
+          disabled={false}
         />
         {clearable && (
           <Button

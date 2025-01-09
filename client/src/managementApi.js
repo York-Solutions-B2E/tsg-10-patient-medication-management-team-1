@@ -216,7 +216,7 @@ class ManagementApi {
    * Use async function and await this method to get the response data.
    * @returns {Promise<PharmacyData[]>} {PharmacyData[]}
    */
-  static async getPharmacies() {
+  static async getAllPharmacies() {
     return this.request("/pharmacies");
   }
 
@@ -237,6 +237,18 @@ class ManagementApi {
    */
   static async createPharmacy(pharmacyData) {
     return this.request("/pharmacies", "post", pharmacyData);
+  }
+
+  // Medication methods
+
+  /**
+   * Get all medications
+   *
+   * Use async function and await this method to get the response data.
+   * @returns {Promise<MedicationData[]>} {MedicationData[]}
+   */
+  static async getAllMedications() {
+    return this.request("/medications");
   }
 
   // Authentication methods
