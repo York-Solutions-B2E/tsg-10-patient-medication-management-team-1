@@ -12,6 +12,6 @@ public class NewPrescriptionEvent {
     private String prescriptionId;
     private String medicationCode;
     private String dosage;
-    private String quantity;
+    private Integer quantity;
     private String instructions;
 }

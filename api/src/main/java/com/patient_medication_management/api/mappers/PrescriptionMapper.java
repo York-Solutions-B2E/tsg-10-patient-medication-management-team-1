@@ -46,9 +46,6 @@ public interface PrescriptionMapper {
     @Mapping(target = "patientId", source = "patient.patientId")
     @Mapping(target = "prescriptionId", source = "prescriptionId")
     @Mapping(target = "medicationCode", source = "medication.medicationCode")
-    @Mapping(target = "dosage", source = "dosage")
-    @Mapping(target = "quantity", expression = "java(String.valueOf(prescription.getQuantity()))")
-    @Mapping(target = "instructions", source = "instructions")
     public abstract NewPrescriptionEvent toNewPrescriptionEvent(Prescription prescription);
 
     public abstract CancelPrescriptionEvent toCancelPrescriptionEvent(Prescription prescription);
