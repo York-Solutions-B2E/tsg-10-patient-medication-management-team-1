@@ -81,17 +81,10 @@ const PrescriptionCreationPage = () => {
   useEffect(() => {
     console.log(pharmacies);
     const fetchData = async () => {
-      console.log("fetching data");
       const pharmaciesData = await handleGetPharmacies();
       const medicationsData = await handleGetMedications();
       console.log(pharmaciesData);
       console.log(medicationsData);
-      // const response = await Promise.all([
-      //   handleGetPharmacies(),
-      //   handleGetMedications(),
-      // ]);
-      // console.log(response);
-
       setPharmacies(pharmaciesData);
       setMedications(medicationsData);
       setFetched(true);

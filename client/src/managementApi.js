@@ -35,13 +35,24 @@ class ManagementApi {
    * @returns {Promise<ResponseDataObject>} {ResponseData}
    */
   static async request(endpoint, method = "get", data = {}) {
+    console.log("API Call:", endpoint, data, method);
     console.debug("API Call:", endpoint, data, method);
     const url = `${BASE_URL}${endpoint}`;
     const headers = this.token ? { "X-XSRF-TOKEN": this.token } : {};
     try {
-      return (
-        await axios({ url, method, data, headers, withCredentials: true })
-      ).data;
+      //  return (
+      //   await axios({ url, method, data, headers, withCredentials: true })
+      // ).data;
+      const response = await axios({
+        url,
+        method,
+        data,
+        headers,
+        withCredentials: true,
+      });
+      console.log("API Response:", response.data);
+      console.debug("API Response:", response.data);
+      return response.data;
     } catch (err) {
       console.error("API Error:", err.response);
       let message = err.response.data.error.message;
@@ -104,7 +115,7 @@ class ManagementApi {
   ) {
     return this.request(
       `/patients?page=${page}&limit=${limit}` +
-        (filter ? `&filter=${filter}&filterValue=${filterValue}` : "")
+        (filter ? `&filterName=${filter}&filterValue=${filterValue}` : "")
     );
   }
 
@@ -193,7 +204,7 @@ class ManagementApi {
   ) {
     return this.request(
       `/prescriptions?page=${page}&limit=${limit}` +
-        (filter ? `&filter=${filter}&filterValue=${filterValue}` : "")
+        (filter ? `&filterName=${filter}&filterValue=${filterValue}` : "")
     );
   }
 

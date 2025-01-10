@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import useForm from "../../hooks/useForm";
 import { required, email, phone, patientId } from "../../utils/validations";
 import {
@@ -8,13 +9,21 @@ import {
   Radio,
   FormControlLabel,
   Autocomplete,
+  Divider,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import Button from "./Button";
 
-const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
+const Form = ({
+  fields,
+  onSubmit,
+  isLoading,
+  clearable,
+  classNames,
+  title,
+}) => {
   /**
    * Get the validation test function based on the validation type
    *
@@ -38,7 +47,9 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
    * Initial values for the form fields.
    */
   const initialValues = fields.reduce((acc, field) => {
-    acc[field.name] = field.defaultValue || "";
+    if (field.type !== "divider") {
+      acc[field.name] = field.defaultValue || "";
+    }
     return acc;
   }, {});
 
@@ -69,8 +80,21 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
     clearForm,
   } = useForm(initialValues, requiredFields, validations);
 
+  const selectedValue = useMemo(() => {
+    return fields.reduce((acc, field) => {
+      if (field.type === "select" && field.autocomplete) {
+        const selected = field.options.find(
+          (option) => option.value === values[field.name]
+        );
+        acc[field.name] = selected || null;
+      }
+      return acc;
+    }, {});
+  }, [fields, values]);
+
   return (
     <div className={`form` + classNames ? classNames : ""}>
+      {title && <h2>{title}</h2>}
       {fields.map((field) => {
         switch (field.type) {
           case "text":
@@ -96,11 +120,16 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                 {field.autocomplete ? (
                   <Autocomplete
                     key={field.name}
-                    name={field.name}
                     options={field.options}
-                    value={values[field.name]}
-                    onChange={(e, value) => {
-                      handleChange({ target: { name: field.name, value } });
+                    value={selectedValue.value}
+                    onChange={(e, v) => {
+                      console.log(v);
+                      handleChange({
+                        target: {
+                          name: field.name,
+                          value: v.value,
+                        },
+                      });
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -212,6 +241,13 @@ const Form = ({ fields, onSubmit, isLoading, clearable, classNames }) => {
                 error={errors[field.name] ? true : false}
                 helperText={errors[field.name]}
               />
+            );
+          case "divider":
+            return (
+              <div key={field.label} className="form-divider">
+                <span>{field.label}</span>
+                <Divider key={field.label} />
+              </div>
             );
           default:
             return null;

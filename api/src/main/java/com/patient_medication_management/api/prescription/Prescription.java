@@ -40,9 +40,6 @@ public class Prescription {
     private PrescriptionStatus status;
 
     @Column(nullable = false)
-    private String issueDate;
-
-    @Column(nullable = false)
     private String dosage;
 
     @Column(nullable = false)
@@ -71,12 +68,11 @@ public class Prescription {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Prescription(String instructions, String prescriptionId, PrescriptionStatus status, String issueDate, String dosage, Integer quantity,
-                        Medication medication, Doctor doctor, Pharmacy pharmacy, Patient patient) {
-        this.instructions = instructions;
+    // All but id, createdAt, and updatedAt constructor
+    public Prescription(String prescriptionId, String instructions, PrescriptionStatus status, String dosage, Integer quantity, Medication medication, Doctor doctor, Pharmacy pharmacy, Patient patient) {
         this.prescriptionId = prescriptionId;
+        this.instructions = instructions;
         this.status = status;
-        this.issueDate = issueDate;
         this.dosage = dosage;
         this.quantity = quantity;
         this.medication = medication;

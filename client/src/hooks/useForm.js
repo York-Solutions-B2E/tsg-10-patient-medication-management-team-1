@@ -6,6 +6,7 @@ const useForm = (initialValue, requiredFields, validations) => {
   const [isValid, setIsValid] = useState(false);
 
   const handleChange = (e) => {
+    console.log(values);
     setValues({
       ...values,
       [e.target.name]: e.target.value,
@@ -13,10 +14,12 @@ const useForm = (initialValue, requiredFields, validations) => {
   };
 
   const handleBlur = (e) => {
+    console.log("habdleBlur");
     const { name, value } = e.target;
     const error = validateField(name, value);
     if (error === "" && errors[name]) {
       delete errors[name];
+      setErrors({ ...errors });
     } else if (error !== "") {
       setErrors({
         ...errors,

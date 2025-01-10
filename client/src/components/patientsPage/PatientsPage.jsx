@@ -23,6 +23,7 @@ const PatientsPage = () => {
   const [totalLoadedPages, setTotalLoadedPages] = useState(0);
   const [lastPage, setLastPage] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const createModalDisc = useDisclosure();
   const editModalDisc = useDisclosure();
@@ -113,95 +114,105 @@ const PatientsPage = () => {
 
   // Form fields for create and edit modals
 
-  const getFormFields = (patient = null) => [
-    {
-      name: "firstName",
-      type: "text",
-      label: "First Name",
-      required: true,
-      defaultValue: patient ? patient.firstName : "",
-    },
-    {
-      name: "lastName",
-      type: "text",
-      label: "Last Name",
-      required: true,
-      defaultValue: patient ? patient.lastName : "",
-    },
-    {
-      name: "dob",
-      type: "date",
-      label: "Date of Birth",
-      disableFuture: true,
-      required: true,
-      defaultValue: patient ? patient.dob : null,
-    },
-    {
-      name: "gender",
-      type: "select",
-      label: "Gender",
-      options: [
-        { value: "MALE", label: "Male" },
-        { value: "FEMALE", label: "Female" },
-      ],
-      required: true,
-      defaultValue: patient ? patient.gender : "",
-    },
-    {
-      name: "email",
-      type: "email",
-      label: "Email",
-      required: true,
-      validation: "email",
-      defaultValue: patient ? patient.email : "",
-    },
-    {
-      name: "phone",
-      type: "text",
-      label: "Phone",
-      required: true,
-      validation: "phone",
-      defaultValue: patient ? patient.phone : "",
-    },
-    { type: "divider", label: "Address" },
-    {
-      name: "street1",
-      type: "text",
-      label: "Street 1",
-      required: true,
-      defaultValue: patient ? patient.street1 : "",
-    },
-    {
-      name: "street2",
-      type: "text",
-      label: "Street 2",
-      defaultValue: patient ? patient.street2 : "",
-    },
-    {
-      name: "city",
-      type: "text",
-      label: "City",
-      required: true,
-      defaultValue: patient ? patient.city : "",
-    },
-    {
-      name: "state",
-      type: "select",
-      label: "State",
-      options: states,
-      autocomplete: true,
-      required: true,
-      defaultValue: patient ? patient.state : "",
-    },
-    {
-      name: "zip",
-      type: "text",
-      label: "Zip",
-      required: true,
-      validation: "zip",
-      defaultValue: patient ? patient.zipCode : "",
-    },
-  ];
+  const getFormFields = (patient = null) => {
+    const f = [
+      {
+        name: "firstName",
+        type: "text",
+        label: "First Name",
+        required: true,
+        defaultValue: patient ? patient.firstName : "",
+      },
+      {
+        name: "lastName",
+        type: "text",
+        label: "Last Name",
+        required: true,
+        defaultValue: patient ? patient.lastName : "",
+      },
+      {
+        name: "dob",
+        type: "date",
+        label: "Date of Birth",
+        disableFuture: true,
+        required: true,
+        defaultValue: patient ? patient.dob : null,
+      },
+      {
+        name: "gender",
+        type: "select",
+        label: "Gender",
+        options: [
+          { value: "MALE", label: "Male" },
+          { value: "FEMALE", label: "Female" },
+        ],
+        required: true,
+        defaultValue: patient ? patient.gender : "",
+      },
+      {
+        name: "email",
+        type: "email",
+        label: "Email",
+        required: true,
+        validation: "email",
+        defaultValue: patient ? patient.email : "",
+      },
+      {
+        name: "phone",
+        type: "text",
+        label: "Phone",
+        required: true,
+        validation: "phone",
+        defaultValue: patient ? patient.phone : "",
+      },
+      { type: "divider", label: "Address" },
+      {
+        name: "street1",
+        type: "text",
+        label: "Street 1",
+        required: true,
+        defaultValue: patient ? patient.street1 : "",
+      },
+      {
+        name: "street2",
+        type: "text",
+        label: "Street 2",
+        defaultValue: patient ? patient.street2 : "",
+      },
+      {
+        name: "city",
+        type: "text",
+        label: "City",
+        required: true,
+        defaultValue: patient ? patient.city : "",
+      },
+      {
+        name: "state",
+        type: "select",
+        label: "State",
+        options: states,
+        autocomplete: true,
+        required: true,
+        defaultValue: patient ? patient.state : "",
+      },
+      {
+        name: "zipCode",
+        type: "text",
+        label: "Zip",
+        required: true,
+        validation: "zip",
+        defaultValue: patient ? patient.zipCode : "",
+      },
+    ];
+    if (patient) {
+      f.push({
+        name: "id",
+        hidden: true,
+        defaultValue: patient.id,
+      });
+    }
+    return f;
+  };
 
   // Reset method to clear the page and reload data
 
@@ -215,7 +226,9 @@ const PatientsPage = () => {
   // Submit methods for create, update, and delete
 
   const onCreateSubmit = async (values) => {
+    console.log("form call", values);
     const newPatient = await handleCreatePatient(values);
+    console.log(newPatient);
     createModalDisc.onClose();
     resetPage();
     navigate(`/patients?filterName=id&filterValue=${newPatient.id}`);
@@ -251,10 +264,16 @@ const PatientsPage = () => {
       setLastPage(last);
       setTotalLoadedPages(number + 1);
     };
-    if (patients.length === 0 || (!lastPage && page > totalLoadedPages)) {
+    if (
+      initialLoad ||
+      (patients.length === 0 && totalLoadedPages === 0) ||
+      (!lastPage && page > totalLoadedPages)
+    ) {
       fetchPatients();
+      setInitialLoad(initialLoad ? false : initialLoad);
     }
   }, [
+    initialLoad,
     handleGetPatients,
     page,
     limit,

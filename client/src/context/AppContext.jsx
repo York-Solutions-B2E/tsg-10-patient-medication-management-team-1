@@ -12,7 +12,7 @@ export const AppProvider = ({ children }) => {
   const [doctorUser, setDoctorUser] = useState(null);
   const [error, setError] = useState(null);
   const [alert, setAlert] = useState(null);
-  const [cookies] = useCookies(["XSRF-TOKEN"]);
+  const [cookies, , removeCookies] = useCookies(["XSRF-TOKEN"]);
 
   const newPatientDisc = useDisclosure();
   const editPatientDisc = useDisclosure();
@@ -34,8 +34,9 @@ export const AppProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const { logoutUrl, idToken } = await ManagementApi.logout();
-      cookies.remove("XSRF-TOKEN");
+      setDoctorUser(null);
       window.location.href = `${logoutUrl}?id_token_hint=${idToken}&post_logout_redirect_uri=${window.location.origin}`;
+      removeCookies("XSRF-TOKEN", { path: "/" });
     } catch (error) {
       setError(error);
       setIsLoading(false);
