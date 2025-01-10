@@ -30,7 +30,6 @@ public class PrescriptionMapperTest {
         dto.setPrescriptionId("f0234975"); // Ensure this matches as a String
         dto.setInstructions("Take twice daily");
         dto.setStatus(PrescriptionStatus.READY_FOR_PICKUP);
-        dto.setIssueDate("2025-01-04");
         dto.setDosage("10mg");
         dto.setQuantity(30);
 
@@ -41,7 +40,6 @@ public class PrescriptionMapperTest {
         assertNotNull(result);
         assertEquals("Take twice daily", result.getInstructions());
         assertEquals(PrescriptionStatus.READY_FOR_PICKUP, result.getStatus());
-        assertEquals("2025-01-04", result.getIssueDate());
         assertEquals("10mg", result.getDosage());
         assertEquals(30, result.getQuantity());
 

@@ -35,14 +35,13 @@ class PrescriptionTest {
         patient.setLastName("Doe");
 
         // Act: Create a Prescription instance using the constructor
-        Prescription prescription = new Prescription("Take once a day", "RX1234", PrescriptionStatus.SENT, "2025-01-01", "500mg", 30, medication, doctor, pharmacy, patient);
+        Prescription prescription = new Prescription("Take once a day", "RX1234", PrescriptionStatus.SENT,  "500mg", 30, medication, doctor, pharmacy, patient);
 
         // Assert: Check that the fields are set correctly
         assertNotNull(prescription);
         assertEquals("RX1234", prescription.getPrescriptionId());
         assertEquals("Take once a day", prescription.getInstructions());
         assertEquals(PrescriptionStatus.SENT, prescription.getStatus());
-        assertEquals("2025-01-01", prescription.getIssueDate());
         assertEquals("500mg", prescription.getDosage());
         assertEquals(30, prescription.getQuantity());
         assertEquals(medication, prescription.getMedication());
@@ -78,7 +77,6 @@ class PrescriptionTest {
                 .prescriptionId("RX1234")
                 .instructions("Take once a day")
                 .status(PrescriptionStatus.SENT)
-                .issueDate("2025-01-01")
                 .dosage("500mg")
                 .quantity(30)
                 .medication(medication)
@@ -92,7 +90,6 @@ class PrescriptionTest {
         assertEquals("RX1234", prescription.getPrescriptionId());
         assertEquals("Take once a day", prescription.getInstructions());
         assertEquals(PrescriptionStatus.SENT, prescription.getStatus());
-        assertEquals("2025-01-01", prescription.getIssueDate());
         assertEquals("500mg", prescription.getDosage());
         assertEquals(30, prescription.getQuantity());
         assertEquals(medication, prescription.getMedication());
