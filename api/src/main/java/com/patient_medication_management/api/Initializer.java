@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -75,18 +77,52 @@ public class Initializer implements CommandLineRunner {
 
 
         // Prescriptions
-        Prescription prescription1 = new Prescription("Take twice daily", "PRF9S",
-                PrescriptionStatus.READY_FOR_PICKUP, "2024-01-01", "500mg", 30, medication1, doctor1, pharmacy1, patient1);
+        Prescription prescription1 = new Prescription(
+                "PRK8A",
+                "Take 2 tablets daily after meals",
+                PrescriptionStatus.SENT,
+                "500mg",
+                30,
+                medication1,
+                doctor1,
+                pharmacy1,
+                patient1
+        );
+        List<Prescription> prescriptions = List.of(
+                new Prescription(
+                        "PRK8A",
+                        "Take 2 tablets daily after meals",
+                        PrescriptionStatus.SENT,
+                        "500mg",
+                        30,
+                        medication1,
+                        doctor1,
+                        pharmacy1,
+                        patient1
+                ),
+                new Prescription("PRK9D", "Take 2 tablets daily with food", PrescriptionStatus.PICKED_UP, "50mg", 30, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK10E", "Apply a thin layer to affected area twice a day", PrescriptionStatus.SENT, "10mg/g", 40, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK11F", "Take 1 tablet every 6 hours as needed for fever", PrescriptionStatus.RECEIVED, "100mg", 24, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK12G", "Take 1 tablet every 12 hours for 7 days", PrescriptionStatus.BACK_ORDERED, "250mg", 14, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK13H", "Take 2 tablets before bed", PrescriptionStatus.READY_FOR_PICKUP, "5mg", 15, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK14I", "Take 1 tablet every 8 hours for 10 days", PrescriptionStatus.PICKED_UP, "300mg", 30, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK15J", "Take 1 tablet every 4 hours for 5 days", PrescriptionStatus.RECEIVED, "200mg", 20, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK16K", "Take 1 tablet every 6 hours for 7 days", PrescriptionStatus.BACK_ORDERED, "150mg", 25, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK17L", "Take 2 tablets in the morning and 1 tablet at night", PrescriptionStatus.READY_FOR_PICKUP, "50mg", 40, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK18M", "Take 1 tablet daily", PrescriptionStatus.SENT, "100mg", 30, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK19N", "Take 1 tablet every 3 hours as needed for pain", PrescriptionStatus.PICKED_UP, "200mg", 15, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK20O", "Take 1 tablet daily in the morning", PrescriptionStatus.RECEIVED, "150mg", 28, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK21P", "Apply a patch once a week", PrescriptionStatus.READY_FOR_PICKUP, "5mg/day", 1, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK22Q", "Take 2 tablets every 12 hours", PrescriptionStatus.SENT, "75mg", 30, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK23R", "Take 1 tablet every 8 hours for 7 days", PrescriptionStatus.BACK_ORDERED, "250mg", 21, medication2, doctor2, pharmacy2, patient2),
+                new Prescription("PRK24S", "Take 1 tablet twice a day with food", PrescriptionStatus.RECEIVED, "100mg", 60, medication2, doctor2, pharmacy2, patient2)
+        );
 
-        Prescription prescription2 = new Prescription("Take as needed", "PR8KA",
-                PrescriptionStatus.SENT, "2024-01-02", "200mg", 60, medication2, doctor2, pharmacy2, patient2);
 
-        prescription1.setPatient(patient1);
-        prescription2.setPatient(patient2);
 
         // Save prescriptions
-        prescriptionRepository.save(prescription1);
-        prescriptionRepository.save(prescription2);
+        prescriptionRepository.saveAll(prescriptions);
+
     }
 
     private String generateUniquePatientId() {

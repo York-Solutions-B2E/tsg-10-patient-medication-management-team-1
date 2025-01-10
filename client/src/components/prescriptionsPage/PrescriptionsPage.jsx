@@ -54,7 +54,7 @@ const PrescriptionsPage = () => {
             onClick={() => {
               console.log(params.row.id);
               setSelectedPrescriptionId(params.row.id);
-              detailsModalDisc.onOpen;
+              detailsModalDisc.onOpen();
             }}
           />
         );
@@ -72,8 +72,9 @@ const PrescriptionsPage = () => {
               params.row.status === "PICKED_UP"
             }
             onClick={() => {
-              selectedPrescriptionId(params.row.id);
-              cancelModalDisc.onOpen;
+              console.log(params.row.id);
+              setSelectedPrescriptionId(params.row.id);
+              cancelModalDisc.onOpen();
             }}
           />
         );
@@ -166,10 +167,9 @@ const PrescriptionsPage = () => {
         isLoading={isLoading}
       />
       <DetailsModal
-        details={
+        prescription={
           selectedPrescriptionId !== null
             ? prescriptions.find((p) => p.id === selectedPrescriptionId)
-                .instructions
             : ""
         }
         disclosure={detailsModalDisc}

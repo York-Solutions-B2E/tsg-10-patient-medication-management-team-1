@@ -90,6 +90,7 @@ const DataGridComponent = ({
           <button
             disabled={isLoading}
             onClick={() => {
+              navigate(pathname);
               setFilter("");
               setFilterValue("");
             }}
@@ -104,7 +105,9 @@ const DataGridComponent = ({
                 ? () => searchFunction(filter, filterValue)
                 : () =>
                     navigate(
-                      `${pathname}?filter=${filter}&filterValue=${filterValue}`
+                      filter === "" && filterValue === ""
+                        ? `${pathname}?filter=${filter}&filterValue=${filterValue}`
+                        : pathname
                     )
             }
             data-testid="search-button"
