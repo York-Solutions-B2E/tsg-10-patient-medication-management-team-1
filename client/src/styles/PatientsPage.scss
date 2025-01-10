@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.patients-page {
+  font-family: 'Poppins', sans-serif;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Ensures stacking of elements */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  
+}
+
+
+  .box {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    box-shadow: 10px 10px black;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    margin-bottom: 20px; 
+  }
+
+
+  .submit-button {
+    background-color: #ffd755;
+    color: black;
+    border: 1px solid black;
+    box-shadow: 5px 5px black;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    transition: transform 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-2px);
+    }
+  
+    &:active {
+      transform: translateY(2px);
+    }
+  }
