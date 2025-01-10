@@ -1,38 +1,29 @@
-# Step 1 Build The React Application
-FROM node:lts AS build
+# Stage 1: Build
+FROM node:18-alpine AS builder
 
-# Set the working environment
-WORKDIR /opt/app
+# Set working directory inside the container
+WORKDIR /client
 
 # Copy package.json and package-lock.json
-COPY package*json ./
-
-# Install latest npm
-RUN npm install -g npm@latest
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy the entire project into the container
+# Copy the rest of the application files
 COPY . .
 
-# Build the application
+# Build the application for production
 RUN npm run build
 
-# Step 2: Serve the React application using Node.js
-FROM node:lts AS serve
+# Stage 2: Serve with a lightweight web server
+FROM nginx:alpine
 
-# Set the working directory
-WORKDIR /opt/app
+# Copy the build output from the previous stage to the nginx public directory
+COPY --from=builder /client/dist /usr/share/nginx/html
 
-# Install a lightweight static file server (e.g., serve)
-RUN npm install -g serve
+# Expose the default port used by nginx
+EXPOSE 80
 
-# Copy the built files from the build stage
-COPY --from=build /opt/app/build ./dist
-
-# Expose the port where the app will run
-EXPOSE 3000
-
-# Use `serve` to serve the static files
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
