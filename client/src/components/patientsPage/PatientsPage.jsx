@@ -17,12 +17,11 @@ import states from "../../utils/states.js";
 const PatientsPage = () => {
   const [searchParams] = useSearchParams();
   const [patients, setPatients] = useState([]);
-  const [page, setPage] = useState(0);
-  const [limit] = useState(10);
   const [totalLoadedPages, setTotalLoadedPages] = useState(0);
   const [lastPage, setLastPage] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
-  const [initialLoad, setInitialLoad] = useState(true);
+
+  const [pageModel, setPageModel] = useState({ page: 0, pageSize: 5 });
 
   const createModalDisc = useDisclosure();
   const editModalDisc = useDisclosure();
@@ -124,14 +123,20 @@ const PatientsPage = () => {
     { value: "dob", label: "Date of Birth" },
   ];
 
-  const handleSearch = (name, value) => {
+  const handleSearch = async (name, value) => {
+    const { content, number, last } = await handleGetPatients(
+      0,
+      5,
+      name,
+      value
+    );
+    setTotalLoadedPages(number + 1);
+    setLastPage(last);
+    setPageModel({ ...pageModel, page: number });
+    setPatients(content);
     navigate(`/patients?filterName=${name}&filterValue=${value}`, {
       replace: true,
     });
-    setPatients([]);
-    setTotalLoadedPages(0);
-    setLastPage(false);
-    setPage(0);
   };
 
   // Form fields for create and edit modals
@@ -242,15 +247,13 @@ const PatientsPage = () => {
     setPatients([]);
     setTotalLoadedPages(0);
     setLastPage(false);
-    setPage(0);
+    setPageModel({ ...pageModel, page: 0 });
   };
 
   // Submit methods for create, update, and delete
 
   const onCreateSubmit = async (values) => {
-    console.log("form call", values);
     const newPatient = await handleCreatePatient(values);
-    console.log(newPatient);
     createModalDisc.onClose();
     resetPage();
     navigate(`/patients?filterName=id&filterValue=${newPatient.id}`);
@@ -273,54 +276,46 @@ const PatientsPage = () => {
 
   useEffect(() => {
     const fetchPatients = async () => {
-      const pageToLoad = page === 0 ? 0 : page - 1;
-      console.log(searchParams.get("filterName"));
       const { content, number, last } = await handleGetPatients(
-        pageToLoad,
-        limit,
+        pageModel.page,
+        pageModel.pageSize,
         searchParams.get("filterName") || null,
         searchParams.get("filterValue") || null
       );
-      setPatients(content);
-      setPage(number + 1);
+      setPatients([...patients, ...content]);
+      setPageModel({ ...pageModel, page: number });
       setLastPage(last);
       setTotalLoadedPages(number + 1);
     };
     if (
-      initialLoad ||
       (patients.length === 0 && totalLoadedPages === 0) ||
-      (!lastPage && page > totalLoadedPages)
+      (!lastPage && pageModel.page == totalLoadedPages)
     ) {
       fetchPatients();
-      setInitialLoad(initialLoad ? false : initialLoad);
     }
   }, [
-    initialLoad,
     handleGetPatients,
-    page,
-    limit,
+    pageModel,
     searchParams,
     lastPage,
     patients,
     totalLoadedPages,
   ]);
 
-  
-
   return (
     <div data-testid="grid-container" className="patients-page">
-      <div className="header-box">Patient List</div>
+      {/* <div className="header-box">Patient List</div> */}
       <DataGridComponent
         isLoading={isLoading}
+        title="Patient List"
         rows={patients}
         columns={columns}
         filterOptions={filterOptions}
         filterable={true}
-        page={page}
-        setPage={setPage}
         lastPage={lastPage}
         totalPages={totalLoadedPages}
-        pageSize={limit}
+        pageModel={pageModel}
+        setPageModel={setPageModel}
         searchFunction={handleSearch}
       />
       <div className="button-area">

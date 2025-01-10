@@ -29,7 +29,7 @@ WORKDIR /opt/app
 RUN npm install -g serve
 
 # Copy the built files from the build stage
-COPY --from=build /opt/app/build ./build
+COPY --from=build /opt/app/build ./dist
 
 # Expose the port where the app will run
 EXPOSE 3000

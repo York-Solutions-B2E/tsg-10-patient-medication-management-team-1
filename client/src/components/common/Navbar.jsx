@@ -1,4 +1,4 @@
-import "../../styles/Navbar.scss";
+import "../../styles/navbar.scss";
 
 import Button from "./Button";
 
@@ -17,11 +17,11 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
 
   return (
     <nav className="navbar">
-      {/* Home Link */}
       <div className="nav-left">
         <Button
           action={() => navigate("/patients")}
           type="nav-item home"
+          classNames="home"
           text="Home"
           icon={<LocalHospitalSharp />}
         />
@@ -68,6 +68,7 @@ const Navbar = ({ isLoggedIn, logout, userInfo, isLoading }) => {
             action={logout}
             type="nav-tab"
             text="Logout"
+            className="logout"
             tooltipText="Logout"
           />
         </div>

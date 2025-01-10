@@ -94,7 +94,13 @@ const PrescriptionCreationPage = () => {
     if (!fetched) {
       fetchData();
     }
-  }, []);
+  }, [
+    fetched,
+    handleGetPharmacies,
+    handleGetMedications,
+    pharmacies,
+    medications,
+  ]);
 
   return (
     <div
@@ -122,18 +128,18 @@ const PrescriptionCreationPage = () => {
       </div>
       <div
         style={{
-    backgroundColor: "#ffffff", // White background for clarity
-    padding: "30px", // More padding for better spacing
-    borderRadius: "10px", // Rounded corners for aesthetics
-    boxShadow: "10px 10px 0px black", // Drop shadow for depth
-    width: "400px", // Fixed width for consistent layout
-    display: "flex", // Flexbox for alignment
-    flexDirection: "column", // Stacks elements vertically
-    gap: "20px", // Space between child elements
-    border: "2px solid black", // Black border for definition
-    margin: "20px auto", // Centered with some vertical margin
-  }}
->
+          backgroundColor: "#ffffff", // White background for clarity
+          padding: "30px", // More padding for better spacing
+          borderRadius: "10px", // Rounded corners for aesthetics
+          boxShadow: "10px 10px 0px black", // Drop shadow for depth
+          width: "400px", // Fixed width for consistent layout
+          display: "flex", // Flexbox for alignment
+          flexDirection: "column", // Stacks elements vertically
+          gap: "20px", // Space between child elements
+          border: "2px solid black", // Black border for definition
+          margin: "20px auto", // Centered with some vertical margin
+        }}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           <Form
             title="Create Prescription"

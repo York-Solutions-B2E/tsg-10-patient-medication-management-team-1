@@ -8,6 +8,7 @@ const DeletePatientModal = ({ disclosure, onSubmit }) => {
       onClose={disclosure.onClose}
       content="Are you sure you want to delete this patient?"
       action={onSubmit}
+      width="400px"
     />
   );
 };

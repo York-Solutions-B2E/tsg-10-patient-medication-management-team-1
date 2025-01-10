@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import "../../styles/patients-page.scss";
 import { useAppContext } from "../../context/AppContext.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DataGridComponent from "../common/DataGridComponent.jsx";
@@ -12,8 +11,7 @@ import useDisclosure from "../../hooks/useDisclosure.js";
 const PrescriptionsPage = () => {
   const [searchParams] = useSearchParams();
   const [prescriptions, setPrescriptions] = useState([]);
-  const [page, setPage] = useState(0);
-  const [limit] = useState(10);
+  const [pageModel, setPageModel] = useState({ page: 0, pageSize: 5 });
   const [totalLoadedPages, setTotalLoadedPages] = useState(0);
   const [lastPage, setLastPage] = useState(false);
   const [selectedPrescriptionId, setSelectedPrescriptionId] = useState(null);
@@ -27,19 +25,16 @@ const PrescriptionsPage = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
     { field: "prescriptionId", headerName: "Prescription ID", width: 120 },
     { field: "patientName", headerName: "Patient", width: 120 },
     { field: "patientId", headerName: "Patient ID", width: 90 },
+    { field: "doctorName", headerName: "Issuing Doctor", width: 130 },
     {
       field: "medicationName",
       headerName: "Medication",
       width: 120,
     },
     { field: "medicationCode", headerName: "Rx Code", width: 100 },
-    { field: "createdAt", headerName: "Date Issued", width: 150 },
-    { field: "updateAt", headerName: "Last Updated", width: 150 },
-    { field: "doctorName", headerName: "Issuing Doctor", width: 130 },
     { field: "pharmacyName", headerName: "Pharmacy", width: 130 },
     { field: "dosage", headerName: "Dosage", width: 70 },
     { field: "quantity", headerName: "Quantity", width: 90 },
@@ -93,14 +88,24 @@ const PrescriptionsPage = () => {
     { value: "status", label: "Status" },
   ];
 
-  const handleSearch = (name, value) => {
-    // setPrescriptions([]);
-    // setTotalLoadedPages(0);
-    // setLastPage(false);
-    // setPage(0);
-    navigate(`/prescriptions?filterName=${name}&filterValue=${value}`, {
-      replace: true,
-    });
+  const handleSearch = async (name, value) => {
+    const { content, number, last } = await handleGetPrescriptions(
+      0,
+      5,
+      name != "" ? name : null,
+      value != "" ? value : null
+    );
+    setPrescriptions(content);
+    setPageModel({ ...pageModel, page: number });
+    setLastPage(last);
+    setTotalLoadedPages(number + 1);
+    navigate(
+      "/prescriptions" +
+        (name != "" ? `?filterName=${name}&filterValue=${value}` : ""),
+      {
+        replace: true,
+      }
+    );
   };
 
   const cancelPrescription = async () => {
@@ -117,28 +122,27 @@ const PrescriptionsPage = () => {
   };
 
   useEffect(() => {
-    console.log(prescriptions);
-    console.log();
     const fetchPatients = async () => {
-      const pageToLoad = page === 0 ? 0 : page - 1;
       const { content, number, last } = await handleGetPrescriptions(
-        pageToLoad,
-        limit,
+        pageModel.page,
+        pageModel.pageSize,
         searchParams.get("filterName") || null,
         searchParams.get("filterValue") || null
       );
-      setPrescriptions(content);
-      setPage(number + 1);
+      setPrescriptions([...prescriptions, ...content]);
+      setPageModel({ ...pageModel, page: number });
       setLastPage(last);
       setTotalLoadedPages(number + 1);
     };
-    if (prescriptions.length === 0 || (!lastPage && page > totalLoadedPages)) {
+    if (
+      (prescriptions.length === 0 && totalLoadedPages === 0) ||
+      (!lastPage && pageModel.page >= totalLoadedPages)
+    ) {
       fetchPatients();
     }
   }, [
     handleGetPrescriptions,
-    page,
-    limit,
+    pageModel,
     searchParams,
     lastPage,
     prescriptions,
@@ -147,21 +151,17 @@ const PrescriptionsPage = () => {
 
   return (
     <div data-testid="grid-container" className="prescriptions-page">
-      {/* Wrapper div for Prescription List title */}
-      <div className="header-box">Prescription List</div>
-      
-      {/* DataGrid Component */}
       <DataGridComponent
+        title="Prescription List"
         isLoading={isLoading}
         rows={prescriptions}
         columns={columns}
         filterOptions={filterOptions}
         filterable={true}
-        page={page}
-        setPage={setPage}
+        pageModel={pageModel}
+        setPageModel={setPageModel}
         lastPage={lastPage}
         totalPages={totalLoadedPages}
-        pageSize={limit}
         searchFunction={handleSearch}
       />
       <ConfirmModal

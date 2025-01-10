@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardContent,
   CardActionArea,
+  Box,
 } from "@mui/material";
 import { CheckSharp, CancelSharp } from "@mui/icons-material";
 import Button from "./Button";
@@ -16,36 +17,41 @@ const BasicModal = ({
   isOpen,
   onClose,
   children,
+  width,
 }) => {
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <Card>
-        {title && <CardHeader title={title} />}
-        {content && (
-          <CardContent>
-            <span>{content}</span>
-          </CardContent>
-        )}
-        {children}
-        <CardActionArea>
-          {action && (
-            <Button
-              icon={<CheckSharp />}
-              type="primary"
-              action={action}
-              text="Confirm"
-              loading={isLoading}
-            />
+      <Box sx={{ width: width, margin: "auto", marginTop: "10%" }}>
+        <Card>
+          {title && <CardHeader title={title} />}
+          {content && (
+            <CardContent>
+              <span>{content}</span>
+            </CardContent>
           )}
-          <Button
-            icon={<CancelSharp />}
-            type="secondary"
-            loading={isLoading}
-            action={onClose}
-            text={action ? "Cancel" : "Close"}
-          />
-        </CardActionArea>
-      </Card>
+          <Box sx={{ padding: "16px" }}>{children}</Box>
+          <CardActionArea>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              {action && (
+                <Button
+                  icon={<CheckSharp />}
+                  type="primary"
+                  action={action}
+                  text="Confirm"
+                  loading={isLoading}
+                />
+              )}
+              <Button
+                icon={<CancelSharp />}
+                type="secondary"
+                loading={isLoading}
+                action={onClose}
+                text={action ? "Cancel" : "Close"}
+              />
+            </Box>
+          </CardActionArea>
+        </Card>
+      </Box>
     </Modal>
   );
 };

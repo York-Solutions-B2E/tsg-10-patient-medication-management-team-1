@@ -56,4 +56,8 @@
       color: #f8d7da; /* Change text color on hover */
     }
   }
+  .selected {
+    color: #fff; /* Change text color on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+  }
 }

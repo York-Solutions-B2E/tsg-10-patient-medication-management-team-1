@@ -198,12 +198,12 @@ class ManagementApi {
    */
   static async getPagePrescriptions(
     page = 1,
-    limit = 10,
+    limit = 5,
     filter = null,
     filterValue = null
   ) {
     return this.request(
-      `/prescriptions?page=${page}&limit=${limit}` +
+      `/prescriptions?page=${page}&size=${limit}` +
         (filter ? `&filterName=${filter}&filterValue=${filterValue}` : "")
     );
   }
