@@ -112,6 +112,11 @@ const Form = ({
                 onBlur={handleBlur}
                 error={errors[field.name] ? true : false}
                 helperText={errors[field.name]}
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "5px",
+                  padding: "10px",
+                }}
               />
             );
           case "select":
@@ -240,6 +245,7 @@ const Form = ({
                 onBlur={handleBlur}
                 error={errors[field.name] ? true : false}
                 helperText={errors[field.name]}
+                
               />
             );
           case "divider":

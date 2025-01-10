@@ -66,6 +66,7 @@ const PrescriptionCreationPage = () => {
       label: "Instructions",
       type: "text",
       required: true,
+      className: "instructions-field",
     },
   ];
 
@@ -96,13 +97,52 @@ const PrescriptionCreationPage = () => {
   }, []);
 
   return (
-    <div>
-      <Form
-        title="Create Prescription"
-        fields={formFields}
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-      />
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#fff8e1",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div
+        className="header-box"
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          boxShadow: "10px 10px 0px black",
+          padding: "10px",
+          width: "400px",
+        }}
+      >
+        Create New Prescription
+      </div>
+      <div
+        style={{
+    backgroundColor: "#ffffff", // White background for clarity
+    padding: "30px", // More padding for better spacing
+    borderRadius: "10px", // Rounded corners for aesthetics
+    boxShadow: "10px 10px 0px black", // Drop shadow for depth
+    width: "400px", // Fixed width for consistent layout
+    display: "flex", // Flexbox for alignment
+    flexDirection: "column", // Stacks elements vertically
+    gap: "20px", // Space between child elements
+    border: "2px solid black", // Black border for definition
+    margin: "20px auto", // Centered with some vertical margin
+  }}
+>
+        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+          <Form
+            title="Create Prescription"
+            fields={formFields}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
     </div>
   );
 };
