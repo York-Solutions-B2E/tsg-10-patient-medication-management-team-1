@@ -9,6 +9,7 @@ const Button = ({
   text,
   icon,
   tooltipText,
+  classNames,
 }) => {
   return (
     <>
@@ -17,7 +18,9 @@ const Button = ({
           <button
             onClick={action}
             disabled={disabled || loading}
-            className={`button ${type} ${selected ? "selected" : ""}`}
+            className={`button ${type} ${classNames} ${
+              selected ? "selected" : ""
+            }`}
             style={{
               backgroundColor: "#ff6f61", // Add your styles here
               color: "black",
