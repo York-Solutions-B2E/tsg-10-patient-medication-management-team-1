@@ -186,7 +186,7 @@ public class PrescriptionService {
         logger.info("Prescription CANCELLED SUCCESSFULLY!");
     }
 
-    private void validatePrescriptionDTO(PrescriptionDTO dto) {
+    void validatePrescriptionDTO(PrescriptionDTO dto) {
         if (dto == null) {
             throw new ResourceNotFoundException("Prescription data cannot be null");
         }
@@ -207,14 +207,14 @@ public class PrescriptionService {
 
     @Data
     @AllArgsConstructor
-    private static class RequiredEntities {
+    static class RequiredEntities {
         private Patient patient;
         private Medication medication;
         private Doctor doctor;
         private Pharmacy pharmacy;
     }
 
-    private RequiredEntities findRequiredEntities(PrescriptionDTO dto) {
+    RequiredEntities findRequiredEntities(PrescriptionDTO dto) {
         return new RequiredEntities(
                 findPatient(dto.getPatientId()),
                 findMedication(dto.getMedicationId()),
@@ -251,7 +251,7 @@ public class PrescriptionService {
                 ));
     }
 
-    private Prescription buildPrescription(PrescriptionDTO dto, RequiredEntities entities) {
+    Prescription buildPrescription(PrescriptionDTO dto, RequiredEntities entities) {
         return Prescription.builder()
                 .prescriptionId(generateUniquePrescriptionId())
                 .instructions(dto.getInstructions())
@@ -282,7 +282,7 @@ public class PrescriptionService {
         return result.toString();
     }
 
-    private Page<Prescription> handleStatusFilter(String statusValue, Pageable pageable) {
+    Page<Prescription> handleStatusFilter(String statusValue, Pageable pageable) {
         try {
             PrescriptionStatus status = PrescriptionStatus.valueOf(statusValue.toUpperCase());
             return prescriptionRepository.findByStatus(status, pageable);
