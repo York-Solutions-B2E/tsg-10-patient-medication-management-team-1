@@ -35,7 +35,6 @@ public class PrescriptionControllerTests {
         prescriptionDTO.setPrescriptionId("RX123");
         prescriptionDTO.setInstructions("Take once a day");
         prescriptionDTO.setStatus(PrescriptionStatus.SENT);
-        prescriptionDTO.setIssueDate("2025-01-01");
         prescriptionDTO.setDosage("500mg");
         prescriptionDTO.setQuantity(30);
 
@@ -43,7 +42,6 @@ public class PrescriptionControllerTests {
         createdPrescriptionDTO.setPrescriptionId("RX123");
         createdPrescriptionDTO.setInstructions("Take once a day");
         createdPrescriptionDTO.setStatus(PrescriptionStatus.SENT);
-        createdPrescriptionDTO.setIssueDate("2025-01-01");
         createdPrescriptionDTO.setDosage("500mg");
         createdPrescriptionDTO.setQuantity(30);
 
